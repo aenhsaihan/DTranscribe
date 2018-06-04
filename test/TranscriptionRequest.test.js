@@ -26,7 +26,7 @@ contract('TranscriptionFactory', ([owner, requester]) => {
     transcriptionRequestsLength.toNumber().should.equal(1);
   });
 
-  it('requester should be creator of transcription request', async function() {
+  it('requester should have created the transcription request', async function() {
     await transcriptionFactory.createTranscriptionRequest({
       from: requester
     });
@@ -40,5 +40,20 @@ contract('TranscriptionFactory', ([owner, requester]) => {
     );
     const creator = await transcriptionRequest.requester.call();
     creator.should.be.a('string').that.equals(requester);
+  });
+
+  it('transcript request should have been deployed by factory', async function() {
+    await transcriptionFactory.createTranscriptionRequest({
+      from: requester
+    });
+
+    const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
+      0
+    );
+
+    const verified = await transcriptionFactory.verifiedTranscriptionRequests.call(
+      transcriptionRequestAddress
+    );
+    verified.should.be.true;
   });
 });
