@@ -1,10 +1,10 @@
-// const chai = require('chai'),
-//   expect = chai.exect,
-//   should = chai.should();
+const chai = require('chai'),
+  expect = chai.exect,
+  should = chai.should();
 
 const TranscriptionFactory = artifacts.require('TranscriptionFactory');
 
-contract('TranscriptionRequest App', ([owner]) => {
+contract('TranscriptionRequest App', ([owner, requester]) => {
   // it('should create transription request', async () => {
   //   const instance = await TranscriptionFactory.new({
   //     from: owner
@@ -23,6 +23,7 @@ contract('TranscriptionRequest App', ([owner]) => {
   });
 
   it('has an owner', async function() {
-    assert.equal(await transcriptionFactory.owner(), owner);
+    const factoryOwner = await transcriptionFactory.owner();
+    factoryOwner.should.equal(owner);
   });
 });
