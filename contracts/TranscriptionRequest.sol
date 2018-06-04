@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 contract TranscriptionFactory {
 
-    address owner = msg.sender;
+    address public owner = msg.sender;
 
     mapping (address => bool) public verifiedTranscriptionRequests;
     mapping (address => address[]) public transcriptionRequestsByRequester;
