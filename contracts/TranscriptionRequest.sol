@@ -33,7 +33,49 @@ contract TranscriptionRequest {
 
     address public requester;
 
+    RequestType typeOfRequest;
+    enum RequestType { Text, Audio }
+
+    uint public startTime = now;
+    uint public durationOfTranscriptionPhase;
+    uint public durationOfVoting;
+
+    bytes32 targetLanguage;
+    bytes32 targetAccent;
+
+    string public textRequestIPFSHash;
+    string public audioRequestIPFSHash;
+
+    struct Transcription {
+        uint votes;
+        address[] voters;
+        RequestType typeOfRequest;
+        string transcriptionIPFSHash;
+        address transcriber;
+    }
+
+    Transcription[] transcriptions;
+
+    event TextTranscribed(address transcriber);
+    event AudioTranscribed(address transcriber);
+    event TranscriptionPhaseHasEnded();
+    event VotingHasEnded();
+    event RewardRefunded();
+    event RewardReleased();
+
     constructor(address _requester) public {
         requester = _requester;
+    }
+
+    function transcribeText(string _transcriptionIPFSHash) public {
+
+        Transcription memory transcription = Transcription({
+            votes: 0,
+            voters: new address[](0),
+            typeOfRequest: typeOfRequest,
+            transcriptionIPFSHash: _transcriptionIPFSHash,
+            transcriber: msg.sender
+            });
+        transcriptions.push(transcription);
     }
 }
