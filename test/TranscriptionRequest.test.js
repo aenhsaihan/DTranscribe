@@ -27,7 +27,8 @@ contract('TranscriptionFactory', ([owner, requester]) => {
   });
 
   it('requester should have created the transcription request', async function() {
-    const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
+    const transcriptionRequestAddress = await transcriptionFactory.transcriptionRequestsByRequester.call(
+      requester,
       0
     );
 
