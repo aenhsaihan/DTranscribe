@@ -5,17 +5,6 @@ const chai = require('chai'),
 const TranscriptionFactory = artifacts.require('TranscriptionFactory');
 
 contract('TranscriptionRequest App', ([owner, requester]) => {
-  // it('should create transription request', async () => {
-  //   const instance = await TranscriptionFactory.new({
-  //     from: owner
-  //   });
-  //
-  //   await instance.createTranscriptionRequest();
-  //
-  //   const deployedTranscriptionRequests = await instance.deployedTranscriptionRequests;
-  //   console.log(deployedTranscriptionRequests.length);
-  // });
-
   let transcriptionFactory;
 
   beforeEach('setup contract for each test', async function() {
@@ -25,5 +14,14 @@ contract('TranscriptionRequest App', ([owner, requester]) => {
   it('has an owner', async function() {
     const factoryOwner = await transcriptionFactory.owner();
     factoryOwner.should.equal(owner);
+  });
+
+  it('should create one transcription request', async function() {
+    await transcriptionFactory.createTranscriptionRequest({
+      from: requester
+    });
+
+    const transcriptionRequestsLength = await transcriptionFactory.getTranscriptionRequestsCount.call();
+    transcriptionRequestsLength.toNumber().should.equal(1);
   });
 });

@@ -23,6 +23,10 @@ contract TranscriptionFactory {
     function verifyTranscriptionRequest(address transcriptionRequest) view public returns (bool) {
         return verifiedTranscriptionRequests[transcriptionRequest];
     }
+
+    function getTranscriptionRequestsCount() public view returns (uint) {
+      return deployedTranscriptionRequests.length;
+    }
 }
 
 contract TranscriptionRequest {
