@@ -1,4 +1,5 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.23;
+
 
 contract TranscriptionFactory {
 
@@ -82,13 +83,21 @@ contract TranscriptionRequest {
     }
 
     Transcription[] public transcriptions;
+    address[] winners;
+    address[] winningVoters;
 
     mapping (address => Transcription) public transcriptionsMapping;
+    mapping (address => bool) public verifiedTranscribers;
 
     event RequestTranscribed(address transcriber, RequestType transcriptionRequestType);
     event VotedForTranscription(address voter, address transcriber);
     event RewardRefunded();
     event RewardReleased();
+
+    modifier onlyBy(address _account) {
+        require(msg.sender == _account);
+        _;
+    }
 
     modifier canAskForRefund() {
         require(transcriptions.length < 2);
@@ -137,6 +146,7 @@ contract TranscriptionRequest {
             });
         transcriptions.push(transcription);
         transcriptionsMapping[msg.sender] = transcription;
+        verifiedTranscribers[msg.sender] = true;
 
         emit RequestTranscribed(msg.sender, typeOfRequest);
     }
@@ -145,6 +155,7 @@ contract TranscriptionRequest {
         require(transcriber != msg.sender && msg.sender != requester);
 
         Transcription storage transcription = transcriptionsMapping[transcriber];
+        // make sure that transcriber exists
         require(transcription.transcriber != 0x0000000000000000000000000000000000000000);
 
         transcription.voters.push(msg.sender);
@@ -157,5 +168,69 @@ contract TranscriptionRequest {
         require(msg.sender == requester);
         selfdestruct(requester);
         emit RewardRefunded();
+    }
+
+    function rewardWinner(address _winner) public onlyBy(requester) {
+        require(verifiedTranscribers[_winner]);
+
+        Transcription storage winningTranscription = transcriptionsMapping[_winner];
+        winners.push(_winner);
+
+        _distributeReward(winners, winningTranscription.voters);
+    }
+
+    function noShow() public hasVotingEnded {
+
+        winners = new address[](0);
+        winningVoters = new address[](0);
+        uint currentVotes = 0;
+
+        for (uint i = 0; i < transcriptions.length; i++) {
+            Transcription storage currentTranscription = transcriptions[i];
+            address currentTranscriber = currentTranscription.transcriber;
+            address[] storage currentVoters = currentTranscription.voters;
+
+            if (currentVotes < currentTranscription.votes) {
+                winners = new address[](0);
+                winningVoters = new address[](0);
+            }
+
+            if (currentVotes <= currentTranscription.votes) {
+                winners.push(currentTranscriber);
+
+                for (uint j = 0; i < currentVoters.length; j++) {
+                    address currentVoter = currentVoters[j];
+                    winningVoters.push(currentVoter);
+                }
+
+                currentVotes = currentTranscription.votes;
+            }
+        }
+
+        _distributeReward(winners, winningVoters);
+    }
+
+    function _distributeReward(address[] _winners, address[] _winningVoters) private {
+
+        // pay out reward allocated to voters
+        if (_winningVoters.length > 0) {
+            // the 5% to voters is hardcoded for now
+            uint voterReward = ((reward * 5) / 100) / _winningVoters.length;
+            uint i = 0;
+            for (i; i < _winningVoters.length; i++) {
+                address winningVoter = _winningVoters[i];
+                winningVoter.transfer(voterReward);
+            }
+        }
+
+        uint rewardForEachWinner = reward / _winners.length;
+        for (uint j = 0; i < _winners.length; j++) {
+            address winner = _winners[i];
+            winner.transfer(rewardForEachWinner);
+        }
+
+        // maybe any leftover ether can go to the one who resolved the conflict
+        selfdestruct(requester);
+        emit RewardReleased();
     }
 }
