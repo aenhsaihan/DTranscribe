@@ -7,8 +7,6 @@ contract TranscriptionFactory {
     mapping (address => bool) public verifiedTranscriptionRequests;
     mapping (address => address[]) public transcriptionRequestsByRequester;
 
-    mapping (address => uint) balanceOf;
-
     address[] public deployedTranscriptionRequests;
 
     event TranscriptionRequested(address requester, address request);
@@ -52,11 +50,6 @@ contract TranscriptionFactory {
 
     function getTranscriptionRequestsCount() public view returns (uint) {
         return deployedTranscriptionRequests.length;
-    }
-
-    function deposit() public payable {
-        require(balanceOf[msg.sender] + msg.value >= balanceOf[msg.sender]);
-        balanceOf[msg.sender] += msg.value;
     }
 }
 
