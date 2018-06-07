@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 contract TranscriptionFactory {
 
@@ -6,6 +6,8 @@ contract TranscriptionFactory {
 
     mapping (address => bool) public verifiedTranscriptionRequests;
     mapping (address => address[]) public transcriptionRequestsByRequester;
+
+    mapping (address => uint) balanceOf;
 
     address[] public deployedTranscriptionRequests;
 
@@ -27,17 +29,15 @@ contract TranscriptionFactory {
         require(durationOfVoting > 0);
         require(bytes(targetLanguage).length != 0);
 
-        address newTranscriptionRequest = new TranscriptionRequest(
+        TranscriptionRequest newTranscriptionRequest = (new TranscriptionRequest).value(msg.value)(
             msg.sender,
             typeOfRequest,
             requestIPFSHash,
             durationOfTranscriptionPhase,
             durationOfVoting,
             targetLanguage,
-            targetAccent);
-        // address(this).transfer(msg.value);
-        /* newTranscriptionRequest.transfer(msg.value); */
-        // these didn't work, gonna have to maintain a balance in the factory
+            targetAccent
+        );
 
         deployedTranscriptionRequests.push(newTranscriptionRequest);
         verifiedTranscriptionRequests[newTranscriptionRequest] = true;
@@ -52,6 +52,11 @@ contract TranscriptionFactory {
 
     function getTranscriptionRequestsCount() public view returns (uint) {
         return deployedTranscriptionRequests.length;
+    }
+
+    function deposit() public payable {
+        require(balanceOf[msg.sender] + msg.value >= balanceOf[msg.sender]);
+        balanceOf[msg.sender] += msg.value;
     }
 }
 
@@ -117,7 +122,7 @@ contract TranscriptionRequest {
     uint _durationOfTranscriptionPhase,
     uint _durationOfVoting,
     string _targetLanguage,
-    string _targetAccent) public {
+    string _targetAccent) public payable {
         requester = _requester;
         typeOfRequest = _typeOfRequest;
         requestIPFSHash = _requestIPFSHash;
