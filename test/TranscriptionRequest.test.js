@@ -8,12 +8,27 @@ const TranscriptionRequest = artifacts.require('TranscriptionRequest');
 contract('TranscriptionFactory', ([owner, requester]) => {
   let transcriptionFactory;
 
+  const requestType = 0; // 0 for test, 1 for audio transcription request
+  const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
+  const durationOfTranscriptionPhase = 60;
+  const durationOfVoting = 60;
+  const targetLanguage = 'Spanish';
+  const targetAccent = 'Spaniard';
+
   beforeEach('setup contract for each test', async function() {
     transcriptionFactory = await TranscriptionFactory.new();
 
-    await transcriptionFactory.createTranscriptionRequest({
-      from: requester
-    });
+    await transcriptionFactory.createTranscriptionRequest(
+      requestType,
+      requestIPFSHash,
+      durationOfTranscriptionPhase,
+      durationOfVoting,
+      targetLanguage,
+      targetAccent,
+      {
+        from: requester
+      }
+    );
   });
 
   it('has an owner', async function() {
