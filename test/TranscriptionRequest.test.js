@@ -68,7 +68,7 @@ contract('Transcriptions', ([owner, requester]) => {
     creator.should.be.a('string').that.equals(requester);
   });
 
-  it('transcript request should be verified', async function() {
+  it('transcription request should be verified', async function() {
     const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
       0
     );
@@ -79,13 +79,22 @@ contract('Transcriptions', ([owner, requester]) => {
     verified.should.be.true;
   });
 
-  it('transcript request should have the specified reward amount', async function() {
+  it('transcription request should have the specified reward amount', async function() {
     const contractReward = await transcriptionRequest.reward.call();
     contractReward
       .toNumber()
       .toString()
       .should.equal(reward);
   });
-});
 
-contract('Transcription Request', ([owner, requester]) => {});
+  it('transcription request should have the specified duration for the transcription and voting phases', async function() {
+    const contractDurationOfTranscriptionPhase = await transcriptionRequest.durationOfTranscriptionPhase.call();
+
+    contractDurationOfTranscriptionPhase
+      .toNumber()
+      .should.equal(durationOfTranscriptionPhase);
+
+    const contractDurationOfVoting = await transcriptionRequest.durationOfVoting.call();
+    contractDurationOfVoting.toNumber().should.equal(durationOfVoting);
+  });
+});
