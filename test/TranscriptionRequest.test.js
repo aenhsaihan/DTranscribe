@@ -7,7 +7,15 @@ const TranscriptionRequest = artifacts.require('TranscriptionRequest');
 
 contract(
   'Transcriptions',
-  ([owner, requester, transcriber, voterOne, voterTwo]) => {
+  ([
+    owner,
+    requester,
+    transcriber,
+    secondTranscriber,
+    bogusTranscriber,
+    voterOne,
+    voterTwo
+  ]) => {
     let transcriptionFactory;
     let transcriptionRequestAddress;
     let transcriptionRequest;
@@ -169,6 +177,24 @@ contract(
           err.should.exist;
         }
       });
+
+      it('requester should not be able to vote for a transcription', async function() {
+        try {
+          await transcriptionRequest.voteForTranscriber(transcriber, {
+            from: requester
+          });
+          assert(
+            false,
+            'requester should not be able to vote for a transcription'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
+
+      it('transcriber should not be able to vote for his own transcription', async function() {});
+
+      it('voter should not be able to vote for a non-existent transcription', async function() {});
     });
   }
 );
