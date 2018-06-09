@@ -192,7 +192,19 @@ contract(
         }
       });
 
-      it('transcriber should not be able to vote for his own transcription', async function() {});
+      it('transcriber should not be able to vote for his own transcription', async function() {
+        try {
+          await transcriptionRequest.voteForTranscriber(transcriber, {
+            from: transcriber
+          });
+          assert(
+            false,
+            'transcriber should not be able to vote for his own transcription'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
 
       it('voter should not be able to vote for a non-existent transcription', async function() {});
     });
