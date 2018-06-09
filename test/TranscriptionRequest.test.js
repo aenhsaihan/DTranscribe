@@ -110,4 +110,9 @@ contract('Transcriptions', ([owner, requester]) => {
     web3.toAscii(contractTargetLanguage).should.equal(targetLanguage);
     web3.toAscii(contractTargetAccent).should.equal(targetAccent);
   });
+
+  it('transcription request should have the correct IPFS hash', async function() {
+    contractIPFSHash = await transcriptionRequest.requestIPFSHash.call();
+    contractIPFSHash.should.equal(requestIPFSHash);
+  });
 });
