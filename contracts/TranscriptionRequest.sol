@@ -1,4 +1,5 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.23;
+
 
 contract TranscriptionFactory {
 
@@ -9,15 +10,39 @@ contract TranscriptionFactory {
 
     address[] public deployedTranscriptionRequests;
 
-    event TranscriptRequested(address requester, address request);
+    event TranscriptionRequested(address requester, address request);
 
-    function createTranscriptionRequest() public {
-        address newTranscriptionRequest = new TranscriptionRequest(msg.sender);
+    constructor() public payable {
+    }
+
+    function createTranscriptionRequest(
+        TranscriptionRequest.RequestType typeOfRequest,
+        string requestIPFSHash,
+        uint durationOfTranscriptionPhase,
+        uint durationOfVoting,
+        string targetLanguage,
+        string targetAccent
+    ) public payable {
+        require(bytes(requestIPFSHash).length != 0);
+        require(durationOfTranscriptionPhase > 0);
+        require(durationOfVoting > 0);
+        require(bytes(targetLanguage).length != 0);
+
+        TranscriptionRequest newTranscriptionRequest = (new TranscriptionRequest).value(msg.value)(
+            msg.sender,
+            typeOfRequest,
+            requestIPFSHash,
+            durationOfTranscriptionPhase,
+            durationOfVoting,
+            targetLanguage,
+            targetAccent
+        );
+
         deployedTranscriptionRequests.push(newTranscriptionRequest);
         verifiedTranscriptionRequests[newTranscriptionRequest] = true;
         transcriptionRequestsByRequester[msg.sender].push(newTranscriptionRequest);
 
-        emit TranscriptRequested(msg.sender, newTranscriptionRequest);
+        emit TranscriptionRequested(msg.sender, newTranscriptionRequest);
     }
 
     function verifyTranscriptionRequest(address transcriptionRequest) view public returns (bool) {
@@ -33,18 +58,21 @@ contract TranscriptionRequest {
 
     address public requester;
 
-    RequestType typeOfRequest;
+    uint256 public reward = address(this).balance;
+
     enum RequestType { Text, Audio }
+    RequestType public typeOfRequest;
 
     uint public startTime = now;
     uint public durationOfTranscriptionPhase;
     uint public durationOfVoting;
+    uint public transcriptionPhaseEndTime = startTime + durationOfTranscriptionPhase;
+    uint public votingEndTime = transcriptionPhaseEndTime + durationOfVoting;
 
-    bytes32 targetLanguage;
-    bytes32 targetAccent;
+    bytes public targetLanguage;
+    bytes public targetAccent;
 
-    string public textRequestIPFSHash;
-    string public audioRequestIPFSHash;
+    string public requestIPFSHash;
 
     struct Transcription {
         uint votes;
@@ -54,20 +82,61 @@ contract TranscriptionRequest {
         address transcriber;
     }
 
-    Transcription[] transcriptions;
+    Transcription[] public transcriptions;
+    address[] winners;
+    address[] winningVoters;
 
-    event TextTranscribed(address transcriber);
-    event AudioTranscribed(address transcriber);
-    event TranscriptionPhaseHasEnded();
-    event VotingHasEnded();
+    mapping (address => Transcription) public transcriptionsMapping;
+    mapping (address => bool) public verifiedTranscribers;
+
+    event RequestTranscribed(address transcriber, RequestType transcriptionRequestType);
+    event VotedForTranscription(address voter, address transcriber);
     event RewardRefunded();
     event RewardReleased();
 
-    constructor(address _requester) public {
-        requester = _requester;
+    modifier onlyBy(address _account) {
+        require(msg.sender == _account);
+        _;
     }
 
-    function transcribeText(string _transcriptionIPFSHash) public {
+    modifier canAskForRefund() {
+        require(transcriptions.length < 2);
+        _;
+    }
+
+    modifier hasTranscriptionPhaseEnded() {
+        require(now <= transcriptionPhaseEndTime);
+        _;
+    }
+
+    modifier hasVotingStarted() {
+        require(now >= transcriptionPhaseEndTime);
+        _;
+    }
+
+    modifier hasVotingEnded() {
+        require(now <= votingEndTime);
+        _;
+    }
+
+    constructor(address _requester, RequestType _typeOfRequest,
+    string _requestIPFSHash,
+    uint _durationOfTranscriptionPhase,
+    uint _durationOfVoting,
+    string _targetLanguage,
+    string _targetAccent) public payable {
+        requester = _requester;
+        typeOfRequest = _typeOfRequest;
+        requestIPFSHash = _requestIPFSHash;
+        durationOfTranscriptionPhase = _durationOfTranscriptionPhase;
+        durationOfVoting = _durationOfVoting;
+        targetLanguage = bytes(_targetLanguage);
+        targetAccent = bytes(_targetAccent);
+    }
+
+    function transcribeRequest(string _transcriptionIPFSHash) public hasTranscriptionPhaseEnded {
+        require(msg.sender != requester);
+        require(verifiedTranscribers[msg.sender] != true);
 
         Transcription memory transcription = Transcription({
             votes: 0,
@@ -77,5 +146,92 @@ contract TranscriptionRequest {
             transcriber: msg.sender
             });
         transcriptions.push(transcription);
+        transcriptionsMapping[msg.sender] = transcription;
+        verifiedTranscribers[msg.sender] = true;
+
+        emit RequestTranscribed(msg.sender, typeOfRequest);
+    }
+
+    function voteForTranscriber(address transcriber) public hasVotingStarted hasVotingEnded {
+        require(transcriber != msg.sender && msg.sender != requester);
+
+        Transcription storage transcription = transcriptionsMapping[transcriber];
+        // make sure that transcriber exists
+        require(transcription.transcriber != 0x0000000000000000000000000000000000000000);
+
+        transcription.voters.push(msg.sender);
+        transcription.votes = transcription.voters.length;
+
+        emit VotedForTranscription(msg.sender, transcriber);
+    }
+
+    function askForRefund() public canAskForRefund {
+        require(msg.sender == requester);
+        selfdestruct(requester);
+        emit RewardRefunded();
+    }
+
+    function rewardWinner(address _winner) public onlyBy(requester) {
+        require(verifiedTranscribers[_winner]);
+
+        Transcription storage winningTranscription = transcriptionsMapping[_winner];
+        winners.push(_winner);
+
+        _distributeReward(winners, winningTranscription.voters);
+    }
+
+    function noShow() public hasVotingEnded {
+
+        winners = new address[](0);
+        winningVoters = new address[](0);
+        uint currentVotes = 0;
+
+        for (uint i = 0; i < transcriptions.length; i++) {
+            Transcription storage currentTranscription = transcriptions[i];
+            address currentTranscriber = currentTranscription.transcriber;
+            address[] storage currentVoters = currentTranscription.voters;
+
+            if (currentVotes < currentTranscription.votes) {
+                winners = new address[](0);
+                winningVoters = new address[](0);
+            }
+
+            if (currentVotes <= currentTranscription.votes) {
+                winners.push(currentTranscriber);
+
+                for (uint j = 0; i < currentVoters.length; j++) {
+                    address currentVoter = currentVoters[j];
+                    winningVoters.push(currentVoter);
+                }
+
+                currentVotes = currentTranscription.votes;
+            }
+        }
+
+        _distributeReward(winners, winningVoters);
+    }
+
+    function _distributeReward(address[] _winners, address[] _winningVoters) private {
+
+        // pay out reward allocated to voters
+        if (_winningVoters.length > 0) {
+            // the 5% to voters is hardcoded for now
+            uint voterReward = ((reward * 5) / 100) / _winningVoters.length;
+            uint i = 0;
+            for (i; i < _winningVoters.length; i++) {
+                address winningVoter = _winningVoters[i];
+                winningVoter.transfer(voterReward);
+            }
+        }
+
+        uint rewardForEachWinner = reward / _winners.length;
+        for (uint j = 0; i < _winners.length; j++) {
+            address winner = _winners[i];
+            winner.transfer(rewardForEachWinner);
+        }
+
+        // maybe any leftover ether can go to the one who resolved the conflict
+        selfdestruct(requester);
+        emit RewardReleased();
     }
 }
