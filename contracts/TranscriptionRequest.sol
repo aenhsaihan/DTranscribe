@@ -136,6 +136,7 @@ contract TranscriptionRequest {
 
     function transcribeRequest(string _transcriptionIPFSHash) public hasTranscriptionPhaseEnded {
         require(msg.sender != requester);
+        require(verifiedTranscribers[msg.sender] != true);
 
         Transcription memory transcription = Transcription({
             votes: 0,

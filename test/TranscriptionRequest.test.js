@@ -132,7 +132,7 @@ contract(
       });
     });
 
-    describe('Transcribe Request', () => {
+    describe('Transcribe request and voting', () => {
       it('requester should not be able to transcribe his own request', async function() {
         try {
           await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
@@ -154,6 +154,20 @@ contract(
       it('should create one transcription', async function() {
         const transcription = await transcriptionRequest.transcriptions.call(0);
         transcription.should.exist;
+      });
+
+      it('transcriber should not be allowed to send multiple transcriptions', async function() {
+        try {
+          await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+            from: transcriber
+          });
+          assert(
+            false,
+            'transcriber should not be able to send multiple transcriptions'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
       });
     });
   }
