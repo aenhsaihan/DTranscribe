@@ -102,4 +102,12 @@ contract('Transcriptions', ([owner, requester]) => {
     const contractDurationOfVoting = await transcriptionRequest.durationOfVoting.call();
     contractDurationOfVoting.toNumber().should.equal(durationOfVoting);
   });
+
+  it('transcription request should have the specified target language and accent', async function() {
+    contractTargetLanguage = await transcriptionRequest.targetLanguage.call();
+    contractTargetAccent = await transcriptionRequest.targetAccent.call();
+
+    web3.toAscii(contractTargetLanguage).should.equal(targetLanguage);
+    web3.toAscii(contractTargetAccent).should.equal(targetAccent);
+  });
 });
