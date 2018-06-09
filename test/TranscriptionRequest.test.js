@@ -5,13 +5,12 @@ const chai = require('chai'),
 const TranscriptionFactory = artifacts.require('TranscriptionFactory');
 const TranscriptionRequest = artifacts.require('TranscriptionRequest');
 
-let transcriptionFactory;
-let transcriptionRequest;
-
 contract(
   'Transcriptions',
   ([owner, requester, transcriber, voterOne, voterTwo]) => {
+    let transcriptionFactory;
     let transcriptionRequestAddress;
+    let transcriptionRequest;
 
     const requestType = 0; // 0 for test, 1 for audio transcription request
     const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
@@ -21,7 +20,7 @@ contract(
     const targetAccent = 'Spaniard';
     const reward = '5';
 
-    beforeEach('setup contract for each test', async function() {
+    before('setup factory and deploy request contract', async function() {
       transcriptionFactory = await TranscriptionFactory.new();
 
       await transcriptionFactory.createTranscriptionRequest(
@@ -43,6 +42,14 @@ contract(
       transcriptionRequest = TranscriptionRequest.at(
         transcriptionRequestAddress
       );
+    });
+
+    const transcriptionIPFSHash =
+      'QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz';
+    before('transcribe request', async function() {
+      await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+        from: transcriber
+      });
     });
 
     it('deploys a factory and a transcription request', () => {
@@ -126,9 +133,6 @@ contract(
     });
 
     describe('Transcribe Request', () => {
-      const transcriptionIPFSHash =
-        'QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz';
-
       it('requester should not be able to transcribe his own request', async function() {
         try {
           await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
@@ -141,10 +145,6 @@ contract(
       });
 
       it('transcriber should be verified', async function() {
-        await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
-          from: transcriber
-        });
-
         const verifiedTranscriber = await transcriptionRequest.verifiedTranscribers.call(
           transcriber
         );
@@ -152,10 +152,6 @@ contract(
       });
 
       it('should create one transcription', async function() {
-        await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
-          from: transcriber
-        });
-
         const transcription = await transcriptionRequest.transcriptions.call(0);
         transcription.should.exist;
       });
