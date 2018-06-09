@@ -45,74 +45,78 @@ contract('Transcriptions', ([owner, requester]) => {
     transcriptionRequest.address.should.exist;
   });
 
-  it('marks caller as the owner', async function() {
-    const factoryOwner = await transcriptionFactory.owner();
-    factoryOwner.should.equal(owner);
+  describe('Transcription Factory', () => {
+    it('marks caller as the owner', async function() {
+      const factoryOwner = await transcriptionFactory.owner();
+      factoryOwner.should.equal(owner);
+    });
+
+    it('should create one transcription request', async function() {
+      const transcriptionRequestsLength = await transcriptionFactory.getTranscriptionRequestsCount.call();
+      transcriptionRequestsLength.toNumber().should.equal(1);
+    });
+
+    it('requester should have created the transcription request', async function() {
+      const transcriptionRequestAddress = await transcriptionFactory.transcriptionRequestsByRequester.call(
+        requester,
+        0
+      );
+
+      const transcriptionRequest = TranscriptionRequest.at(
+        transcriptionRequestAddress
+      );
+      const creator = await transcriptionRequest.requester.call();
+      creator.should.be.a('string').that.equals(requester);
+    });
+
+    it('transcription request should be verified', async function() {
+      const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
+        0
+      );
+
+      const verified = await transcriptionFactory.verifiedTranscriptionRequests.call(
+        transcriptionRequestAddress
+      );
+      verified.should.be.true;
+    });
   });
 
-  it('should create one transcription request', async function() {
-    const transcriptionRequestsLength = await transcriptionFactory.getTranscriptionRequestsCount.call();
-    transcriptionRequestsLength.toNumber().should.equal(1);
-  });
+  describe('Transcription Request Specifications', () => {
+    it('transcription request should have the specified reward amount', async function() {
+      const contractReward = await transcriptionRequest.reward.call();
+      contractReward
+        .toNumber()
+        .toString()
+        .should.equal(reward);
+    });
 
-  it('requester should have created the transcription request', async function() {
-    const transcriptionRequestAddress = await transcriptionFactory.transcriptionRequestsByRequester.call(
-      requester,
-      0
-    );
+    it('transcription request should have the specified request type', async function() {
+      const contractRequestType = await transcriptionRequest.typeOfRequest.call();
+      contractRequestType.toNumber().should.equal(requestType);
+    });
 
-    const transcriptionRequest = TranscriptionRequest.at(
-      transcriptionRequestAddress
-    );
-    const creator = await transcriptionRequest.requester.call();
-    creator.should.be.a('string').that.equals(requester);
-  });
+    it('transcription request should have the specified duration for the transcription and voting phases', async function() {
+      const contractDurationOfTranscriptionPhase = await transcriptionRequest.durationOfTranscriptionPhase.call();
 
-  it('transcription request should be verified', async function() {
-    const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
-      0
-    );
+      contractDurationOfTranscriptionPhase
+        .toNumber()
+        .should.equal(durationOfTranscriptionPhase);
 
-    const verified = await transcriptionFactory.verifiedTranscriptionRequests.call(
-      transcriptionRequestAddress
-    );
-    verified.should.be.true;
-  });
+      const contractDurationOfVoting = await transcriptionRequest.durationOfVoting.call();
+      contractDurationOfVoting.toNumber().should.equal(durationOfVoting);
+    });
 
-  it('transcription request should have the specified reward amount', async function() {
-    const contractReward = await transcriptionRequest.reward.call();
-    contractReward
-      .toNumber()
-      .toString()
-      .should.equal(reward);
-  });
+    it('transcription request should have the specified target language and accent', async function() {
+      contractTargetLanguage = await transcriptionRequest.targetLanguage.call();
+      contractTargetAccent = await transcriptionRequest.targetAccent.call();
 
-  it('transcription request should have the specified request type', async function() {
-    const contractRequestType = await transcriptionRequest.typeOfRequest.call();
-    contractRequestType.toNumber().should.equal(requestType);
-  });
+      web3.toAscii(contractTargetLanguage).should.equal(targetLanguage);
+      web3.toAscii(contractTargetAccent).should.equal(targetAccent);
+    });
 
-  it('transcription request should have the specified duration for the transcription and voting phases', async function() {
-    const contractDurationOfTranscriptionPhase = await transcriptionRequest.durationOfTranscriptionPhase.call();
-
-    contractDurationOfTranscriptionPhase
-      .toNumber()
-      .should.equal(durationOfTranscriptionPhase);
-
-    const contractDurationOfVoting = await transcriptionRequest.durationOfVoting.call();
-    contractDurationOfVoting.toNumber().should.equal(durationOfVoting);
-  });
-
-  it('transcription request should have the specified target language and accent', async function() {
-    contractTargetLanguage = await transcriptionRequest.targetLanguage.call();
-    contractTargetAccent = await transcriptionRequest.targetAccent.call();
-
-    web3.toAscii(contractTargetLanguage).should.equal(targetLanguage);
-    web3.toAscii(contractTargetAccent).should.equal(targetAccent);
-  });
-
-  it('transcription request should have the correct IPFS hash', async function() {
-    contractIPFSHash = await transcriptionRequest.requestIPFSHash.call();
-    contractIPFSHash.should.equal(requestIPFSHash);
+    it('transcription request should have the correct IPFS hash', async function() {
+      contractIPFSHash = await transcriptionRequest.requestIPFSHash.call();
+      contractIPFSHash.should.equal(requestIPFSHash);
+    });
   });
 });
