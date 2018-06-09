@@ -16,6 +16,7 @@ contract('Transcriptions', ([owner, requester]) => {
   const durationOfVoting = 60;
   const targetLanguage = 'Spanish';
   const targetAccent = 'Spaniard';
+  const reward = '5';
 
   beforeEach('setup contract for each test', async function() {
     transcriptionFactory = await TranscriptionFactory.new();
@@ -28,7 +29,8 @@ contract('Transcriptions', ([owner, requester]) => {
       targetLanguage,
       targetAccent,
       {
-        from: requester
+        from: requester,
+        value: reward
       }
     );
 
@@ -66,7 +68,7 @@ contract('Transcriptions', ([owner, requester]) => {
     creator.should.be.a('string').that.equals(requester);
   });
 
-  it('transcript request should have been deployed by factory', async function() {
+  it('transcript request should be verified', async function() {
     const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
       0
     );
@@ -75,6 +77,14 @@ contract('Transcriptions', ([owner, requester]) => {
       transcriptionRequestAddress
     );
     verified.should.be.true;
+  });
+
+  it('transcript request should have the specified reward amount', async function() {
+    const contractReward = await transcriptionRequest.reward.call();
+    contractReward
+      .toNumber()
+      .toString()
+      .should.equal(reward);
   });
 });
 
