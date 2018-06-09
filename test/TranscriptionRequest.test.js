@@ -5,12 +5,13 @@ const chai = require('chai'),
 const TranscriptionFactory = artifacts.require('TranscriptionFactory');
 const TranscriptionRequest = artifacts.require('TranscriptionRequest');
 
+let transcriptionFactory;
+let transcriptionRequest;
+
 contract(
   'Transcriptions',
   ([owner, requester, transcriber, voterOne, voterTwo]) => {
-    let transcriptionFactory;
     let transcriptionRequestAddress;
-    let transcriptionRequest;
 
     const requestType = 0; // 0 for test, 1 for audio transcription request
     const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
@@ -139,7 +140,25 @@ contract(
         }
       });
 
-      xit('should be able to transcribe request', async function() {});
+      it('transcriber should be verified', async function() {
+        await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+          from: transcriber
+        });
+
+        const verifiedTranscriber = await transcriptionRequest.verifiedTranscribers.call(
+          transcriber
+        );
+        verifiedTranscriber.should.be.true;
+      });
+
+      it('should create one transcription', async function() {
+        await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+          from: transcriber
+        });
+
+        const transcription = await transcriptionRequest.transcriptions.call(0);
+        transcription.should.exist;
+      });
     });
   }
 );
