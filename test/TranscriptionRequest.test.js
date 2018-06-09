@@ -87,6 +87,11 @@ contract('Transcriptions', ([owner, requester]) => {
       .should.equal(reward);
   });
 
+  it('transcription request should have the specified request type', async function() {
+    const contractRequestType = await transcriptionRequest.typeOfRequest.call();
+    contractRequestType.toNumber().should.equal(requestType);
+  });
+
   it('transcription request should have the specified duration for the transcription and voting phases', async function() {
     const contractDurationOfTranscriptionPhase = await transcriptionRequest.durationOfTranscriptionPhase.call();
 
