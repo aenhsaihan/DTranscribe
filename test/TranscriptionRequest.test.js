@@ -206,7 +206,19 @@ contract(
         }
       });
 
-      it('voter should not be able to vote for a non-existent transcription', async function() {});
+      it('voter should not be able to vote for a non-existent transcription', async function() {
+        try {
+          await transcriptionRequest.voteForTranscriber(bogusTranscriber, {
+            from: voterOne
+          });
+          assert(
+            false,
+            'voter should not be able to vote for a non-existent transcription'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
     });
   }
 );
