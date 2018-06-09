@@ -5,8 +5,10 @@ const chai = require('chai'),
 const TranscriptionFactory = artifacts.require('TranscriptionFactory');
 const TranscriptionRequest = artifacts.require('TranscriptionRequest');
 
-contract('TranscriptionFactory', ([owner, requester]) => {
+contract('Transcriptions', ([owner, requester]) => {
   let transcriptionFactory;
+  let transcriptionRequestAddress;
+  let transcriptionRequest;
 
   const requestType = 0; // 0 for test, 1 for audio transcription request
   const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
@@ -29,9 +31,19 @@ contract('TranscriptionFactory', ([owner, requester]) => {
         from: requester
       }
     );
+
+    transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
+      0
+    );
+    transcriptionRequest = TranscriptionRequest.at(transcriptionRequestAddress);
   });
 
-  it('has an owner', async function() {
+  it('deploys a factory and a transcription request', () => {
+    transcriptionFactory.address.should.exist;
+    transcriptionRequest.address.should.exist;
+  });
+
+  it('marks caller as the owner', async function() {
     const factoryOwner = await transcriptionFactory.owner();
     factoryOwner.should.equal(owner);
   });
@@ -65,3 +77,5 @@ contract('TranscriptionFactory', ([owner, requester]) => {
     verified.should.be.true;
   });
 });
+
+contract('Transcription Request', ([owner, requester]) => {});
