@@ -66,8 +66,8 @@ contract TranscriptionRequest {
     uint public startTime = now;
     uint public durationOfTranscriptionPhase;
     uint public durationOfVoting;
-    uint public transcriptionPhaseEndTime = startTime + durationOfTranscriptionPhase;
-    uint public votingEndTime = transcriptionPhaseEndTime + durationOfVoting;
+    uint public transcriptionPhaseEndTime;
+    uint public votingEndTime;
 
     bytes public targetLanguage;
     bytes public targetAccent;
@@ -131,6 +131,10 @@ contract TranscriptionRequest {
         requestIPFSHash = _requestIPFSHash;
         durationOfTranscriptionPhase = _durationOfTranscriptionPhase;
         durationOfVoting = _durationOfVoting;
+
+        transcriptionPhaseEndTime = startTime + _durationOfTranscriptionPhase;
+        votingEndTime = transcriptionPhaseEndTime + _durationOfVoting;
+
         targetLanguage = bytes(_targetLanguage);
         targetAccent = bytes(_targetAccent);
     }
