@@ -14,7 +14,8 @@ contract(
     secondTranscriber,
     bogusTranscriber,
     voterOne,
-    voterTwo
+    voterTwo,
+    voterThree
   ]) => {
     let transcriptionFactory;
     let transcriptionRequestAddress;
@@ -233,6 +234,17 @@ contract(
 
         const votes = votedTranscription[0].toNumber();
         votes.should.equal(1);
+      });
+
+      it('voter should not be able to vote more than once', async function() {
+        try {
+          await transcriptionRequest.voteForTranscriber(transcriber, {
+            from: voterOne
+          });
+          assert(false, 'voter should not be able to vote more than once');
+        } catch (err) {
+          err.should.exist;
+        }
       });
     });
   }
