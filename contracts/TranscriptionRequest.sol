@@ -88,6 +88,7 @@ contract TranscriptionRequest {
 
     mapping (address => Transcription) public transcriptionsMapping;
     mapping (address => bool) public verifiedTranscribers;
+    mapping (address => bool) public verifiedVoters;
 
     event RequestTranscribed(address transcriber, RequestType transcriptionRequestType);
     event VotedForTranscription(address voter, address transcriber);
@@ -153,7 +154,7 @@ contract TranscriptionRequest {
     }
 
     function voteForTranscriber(address transcriber) public hasVotingStarted hasVotingEnded {
-        require(transcriber != msg.sender && msg.sender != requester);
+        require(transcriber != msg.sender && msg.sender != requester && verifiedVoters[msg.sender] != true);
 
         Transcription storage transcription = transcriptionsMapping[transcriber];
         // make sure that transcriber exists
@@ -161,6 +162,9 @@ contract TranscriptionRequest {
 
         transcription.voters.push(msg.sender);
         transcription.votes = transcription.voters.length;
+
+        // voter can't vote more than once
+        verifiedVoters[msg.sender] = true;
 
         emit VotedForTranscription(msg.sender, transcriber);
     }

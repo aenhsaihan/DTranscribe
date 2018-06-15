@@ -19,6 +19,7 @@ contract(
     let transcriptionFactory;
     let transcriptionRequestAddress;
     let transcriptionRequest;
+    let transcription;
 
     const requestType = 0; // 0 for test, 1 for audio transcription request
     const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
@@ -58,6 +59,8 @@ contract(
       await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
         from: transcriber
       });
+
+      transcription = await transcriptionRequest.transcriptions.call(0);
     });
 
     it('deploys a factory and a transcription request', () => {
@@ -160,7 +163,6 @@ contract(
       });
 
       it('should create one transcription', async function() {
-        const transcription = await transcriptionRequest.transcriptions.call(0);
         transcription.should.exist;
       });
 
@@ -218,6 +220,19 @@ contract(
         } catch (err) {
           err.should.exist;
         }
+      });
+
+      it('voter should be able to vote for a transcription', async function() {
+        await transcriptionRequest.voteForTranscriber(transcriber, {
+          from: voterOne
+        });
+
+        const votedTranscription = await transcriptionRequest.transcriptionsMapping.call(
+          transcriber
+        );
+
+        const votes = votedTranscription[0].toNumber();
+        votes.should.equal(1);
       });
     });
   }

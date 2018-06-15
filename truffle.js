@@ -13,6 +13,11 @@ module.exports = {
       port: 8555,
       gas: 0xfffffffffff,
       gasPrice: 0x01
+    },
+    develop: {
+      host: '127.0.0.1',
+      port: 9545,
+      network_id: '*'
     }
   }
 };
