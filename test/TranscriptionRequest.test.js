@@ -100,10 +100,13 @@ contract(
 
     describe('Transcription Request: Transcription Phase', () => {
       it('should transcribe a request during the transcription phase', async function() {
+        const now = Date.now() / 1000;
+        const transcriptionPhaseEndTime = await transcriptionRequest.transcriptionPhaseEndTime.call();
+        now.should.be.below(transcriptionPhaseEndTime.toNumber());
+
         await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
           from: transcriber
         });
-
         transcription = await transcriptionRequest.transcriptions.call(0);
         transcription.should.exist;
       });
