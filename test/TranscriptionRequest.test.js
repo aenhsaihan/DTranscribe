@@ -245,8 +245,8 @@ contract(
       it('voter should be able to vote for a transcription during the voting phase', async function() {
         const now = Date.now() / 1000;
         const transcriptionPhaseEndTime = await transcriptionRequest.transcriptionPhaseEndTime.call();
-        now.should.be.above(transcriptionPhaseEndTime.toNumber());
         const votingEndTime = await transcriptionRequest.votingEndTime.call();
+        now.should.be.above(transcriptionPhaseEndTime.toNumber());
         now.should.be.below(votingEndTime.toNumber());
 
         await transcriptionRequest.voteForTranscriber(transcriber, {
