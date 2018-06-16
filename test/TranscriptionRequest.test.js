@@ -25,7 +25,7 @@ contract(
     const requestType = 0; // 0 for test, 1 for audio transcription request
     const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
     const durationOfTranscriptionPhase = 60;
-    const durationOfVoting = 60;
+    const durationOfVoting = 1;
     const targetLanguage = 'Spanish';
     const targetAccent = 'Spaniard';
     const reward = '5';
@@ -56,26 +56,19 @@ contract(
 
     const transcriptionIPFSHash =
       'QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz';
-    before('transcribe request', async function() {
-      await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
-        from: transcriber
-      });
-
-      transcription = await transcriptionRequest.transcriptions.call(0);
-    });
-
-    it('deploys a factory and a transcription request', () => {
-      transcriptionFactory.address.should.exist;
-      transcriptionRequest.address.should.exist;
-    });
 
     describe('Transcription Factory', () => {
+      it('deploys a factory and a transcription request', () => {
+        transcriptionFactory.address.should.exist;
+        transcriptionRequest.address.should.exist;
+      });
+
       it('marks caller as the owner', async function() {
         const factoryOwner = await transcriptionFactory.owner();
         factoryOwner.should.equal(owner);
       });
 
-      it('should create one transcription request', async function() {
+      it('should have created one transcription request', async function() {
         const transcriptionRequestsLength = await transcriptionFactory.getTranscriptionRequestsCount.call();
         transcriptionRequestsLength.toNumber().should.equal(1);
       });
@@ -105,7 +98,40 @@ contract(
       });
     });
 
-    describe('Transcription Request Specifications', () => {
+    describe('Transcription Request: Transcription Phase', () => {
+      it('should transcribe a request during the transcription phase', async function() {
+        await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+          from: transcriber
+        });
+
+        transcription = await transcriptionRequest.transcriptions.call(0);
+      });
+
+      it('should create one transcription', async function() {
+        transcription.should.exist;
+      });
+
+      it('transcriber should be verified', async function() {
+        const verifiedTranscriber = await transcriptionRequest.verifiedTranscribers.call(
+          transcriber
+        );
+        verifiedTranscriber.should.be.true;
+      });
+
+      it('transcriber should not be allowed to send multiple transcriptions', async function() {
+        try {
+          await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
+            from: transcriber
+          });
+          assert(
+            false,
+            'transcriber should not be able to send multiple transcriptions'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
+
       it('transcription request should have the specified reward amount', async function() {
         const contractReward = await transcriptionRequest.reward.call();
         contractReward
@@ -142,9 +168,7 @@ contract(
         contractIPFSHash = await transcriptionRequest.requestIPFSHash.call();
         contractIPFSHash.should.equal(requestIPFSHash);
       });
-    });
 
-    describe('Transcribe request and voting', () => {
       it('requester should not be able to transcribe his own request', async function() {
         try {
           await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
@@ -156,31 +180,22 @@ contract(
         }
       });
 
-      it('transcriber should be verified', async function() {
-        const verifiedTranscriber = await transcriptionRequest.verifiedTranscribers.call(
-          transcriber
-        );
-        verifiedTranscriber.should.be.true;
-      });
-
-      it('should create one transcription', async function() {
-        transcription.should.exist;
-      });
-
-      it('transcriber should not be allowed to send multiple transcriptions', async function() {
+      it('voter should not be able to vote for a transcription during the transcription phase', async function() {
         try {
-          await transcriptionRequest.transcribeRequest(transcriptionIPFSHash, {
-            from: transcriber
+          await transcriptionRequest.voteForTranscriber(transcriber, {
+            from: voterOne
           });
           assert(
             false,
-            'transcriber should not be able to send multiple transcriptions'
+            'voter should not be able to vote for a transcription before the voting phase begins'
           );
         } catch (err) {
           err.should.exist;
         }
       });
+    });
 
+    describe('Transcription Request: Voting Phase', () => {
       it('requester should not be able to vote for a transcription', async function() {
         try {
           await transcriptionRequest.voteForTranscriber(transcriber, {
@@ -223,7 +238,7 @@ contract(
         }
       });
 
-      it('voter should be able to vote for a transcription', async function() {
+      it('voter should be able to vote for a transcription during the voting phase', async function() {
         await transcriptionRequest.voteForTranscriber(transcriber, {
           from: voterOne
         });
