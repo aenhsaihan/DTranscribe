@@ -181,6 +181,10 @@ contract(
       });
 
       it('voter should not be able to vote for a transcription during the transcription phase', async function() {
+        const now = Date.now() / 1000;
+        const transcriptionPhaseEndTime = await transcriptionRequest.transcriptionPhaseEndTime.call();
+        now.should.be.below(transcriptionPhaseEndTime.toNumber());
+
         try {
           await transcriptionRequest.voteForTranscriber(transcriber, {
             from: voterOne
