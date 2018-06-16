@@ -105,9 +105,6 @@ contract(
         });
 
         transcription = await transcriptionRequest.transcriptions.call(0);
-      });
-
-      it('should create one transcription', async function() {
         transcription.should.exist;
       });
 
