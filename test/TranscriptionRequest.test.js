@@ -74,14 +74,6 @@ contract(
       });
 
       it('requester should have created the transcription request', async function() {
-        const transcriptionRequestAddress = await transcriptionFactory.transcriptionRequestsByRequester.call(
-          requester,
-          0
-        );
-
-        const transcriptionRequest = TranscriptionRequest.at(
-          transcriptionRequestAddress
-        );
         const creator = await transcriptionRequest.requester.call();
         creator.should.be.a('string').that.equals(requester);
       });
