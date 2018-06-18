@@ -17,7 +17,8 @@ contract(
     bogusTranscriber,
     voterOne,
     voterTwo,
-    voterThree
+    voterThree,
+    nonparticipant
   ]) => {
     let transcriptionFactory;
     let transcriptionRequestAddress;
@@ -286,6 +287,20 @@ contract(
         votes.should.equal(2);
       });
 
+      it('no one should be able to declare no show before voting phase is over', async function() {
+        try {
+          await transcriptionRequest.noShow({
+            from: nonparticipant
+          });
+          assert(
+            false,
+            'no one should be able to declare no show before voting ends'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
+
       it('another voter should not be able to vote if voting phase has ended', async function() {
         const votingEndTime = await transcriptionRequest.votingEndTime.call();
         let timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
@@ -308,5 +323,7 @@ contract(
         }
       });
     });
+
+    describe('Transcription Request: Distribute Reward', () => {});
   }
 );
