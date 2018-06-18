@@ -293,7 +293,7 @@ contract(
         await timeTravel(timeToEndOfVoting);
 
         timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-        timestamp.should.be.above(votingEndTime.toNumber());
+        timestamp.should.be.at.least(votingEndTime.toNumber());
 
         try {
           await transcriptionRequest.voteForTranscriber(transcriber, {
