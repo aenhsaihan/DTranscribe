@@ -285,6 +285,28 @@ contract(
         const votes = votedTranscription[0].toNumber();
         votes.should.equal(2);
       });
+
+      it('another voter should not be able to vote if voting phase has ended', async function() {
+        const votingEndTime = await transcriptionRequest.votingEndTime.call();
+        let timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+        const timeToEndOfVoting = votingEndTime.toNumber() - timestamp;
+        await timeTravel(timeToEndOfVoting);
+
+        timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+        timestamp.should.be.above(votingEndTime.toNumber());
+
+        try {
+          await transcriptionRequest.voteForTranscriber(transcriber, {
+            from: voterThree
+          });
+          assert(
+            false,
+            'voter should not be able to vote after voting phase is over'
+          );
+        } catch (err) {
+          err.should.exist;
+        }
+      });
     });
   }
 );
