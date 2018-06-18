@@ -241,12 +241,15 @@ contract(
         const votingEndTime = await transcriptionRequest.votingEndTime.call();
 
         let timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-        const timeToEndOfTranscription = transcriptionPhaseEndTime.toNumber() - timestamp;
+        const timeToEndOfTranscription =
+          transcriptionPhaseEndTime.toNumber() - timestamp;
         await timeTravel(timeToEndOfTranscription);
 
         timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-        timestamp.should.be.above(transcriptionPhaseEndTime.toNumber());
-        timestamp.should.be.below(votingEndTime.toNumber());
+        timestamp.should.be.within(
+          transcriptionPhaseEndTime.toNumber(),
+          votingEndTime.toNumber()
+        );
 
         await transcriptionRequest.voteForTranscriber(transcriber, {
           from: voterOne
@@ -269,6 +272,18 @@ contract(
         } catch (err) {
           err.should.exist;
         }
+      });
+
+      it('another voter should be able to vote for the same transcription', async function() {
+        await transcriptionRequest.voteForTranscriber(transcriber, {
+          from: voterTwo
+        });
+
+        const votedTranscription = await transcriptionRequest.transcriptionsMapping.call(
+          transcriber
+        );
+        const votes = votedTranscription[0].toNumber();
+        votes.should.equal(2);
       });
     });
   }
