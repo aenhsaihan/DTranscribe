@@ -1,3 +1,5 @@
+const timeTravel = require('../test-helpers/timeTravel');
+
 const chai = require('chai'),
   expect = chai.expect,
   should = chai.should();
@@ -25,7 +27,7 @@ contract(
     const requestType = 0; // 0 for test, 1 for audio transcription request
     const requestIPFSHash = 'QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i';
     const durationOfTranscriptionPhase = 60;
-    const durationOfVoting = 1;
+    const durationOfVoting = 60;
     const targetLanguage = 'Spanish';
     const targetAccent = 'Spaniard';
     const reward = '5';
@@ -235,11 +237,16 @@ contract(
       });
 
       it('voter should be able to vote for a transcription during the voting phase', async function() {
-        const now = Date.now() / 1000;
         const transcriptionPhaseEndTime = await transcriptionRequest.transcriptionPhaseEndTime.call();
         const votingEndTime = await transcriptionRequest.votingEndTime.call();
-        now.should.be.above(transcriptionPhaseEndTime.toNumber());
-        now.should.be.below(votingEndTime.toNumber());
+
+        let timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+        const timeToEndOfTranscription = transcriptionPhaseEndTime.toNumber() - timestamp;
+        await timeTravel(timeToEndOfTranscription);
+
+        timestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+        timestamp.should.be.above(transcriptionPhaseEndTime.toNumber());
+        timestamp.should.be.below(votingEndTime.toNumber());
 
         await transcriptionRequest.voteForTranscriber(transcriber, {
           from: voterOne
