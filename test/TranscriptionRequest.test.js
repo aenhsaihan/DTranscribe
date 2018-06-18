@@ -324,6 +324,17 @@ contract(
       });
     });
 
-    describe('Transcription Request: Distribute Reward', () => {});
+    describe('Transcription Request: Distribute Reward', () => {
+      it('should not be able to reward a non-existent transcriber', async function() {
+        try {
+          await transcriptionRequest.rewardWinner(bogusTranscriber, {
+            from: requester
+          });
+          assert(false, 'requester should not reward non-existent transcriber');
+        } catch (err) {
+          err.should.exist;
+        }
+      });
+    });
   }
 );
