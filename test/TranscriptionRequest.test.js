@@ -335,6 +335,17 @@ contract(
           err.should.exist;
         }
       });
+
+      it('only requester should be able to reward winner', async function() {
+        try {
+          await transcriptionRequest.rewardWinner(transcriber, {
+            from: nonparticipant
+          });
+          assert(false, 'requester should not reward non-existent transcriber');
+        } catch (err) {
+          err.should.exist;
+        }
+      });
     });
   }
 );
