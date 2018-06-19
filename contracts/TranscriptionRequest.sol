@@ -173,8 +173,7 @@ contract TranscriptionRequest {
         emit VotedForTranscription(msg.sender, transcriber);
     }
 
-    function askForRefund() public canAskForRefund {
-        require(msg.sender == requester);
+    function askForRefund() public canAskForRefund onlyBy(requester) {
         selfdestruct(requester);
         emit RewardRefunded();
     }
