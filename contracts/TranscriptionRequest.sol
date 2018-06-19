@@ -185,7 +185,7 @@ contract TranscriptionRequest {
         Transcription storage winningTranscription = transcriptionsMapping[_winner];
         winners.push(_winner);
 
-        _distributeReward(winners, winningTranscription.voters);
+        _distributeReward(winners, winningTranscription.voters, requester);
     }
 
     function noShow() public hasVotingEnded {
@@ -216,10 +216,10 @@ contract TranscriptionRequest {
             }
         }
 
-        _distributeReward(winners, winningVoters);
+        _distributeReward(winners, winningVoters, msg.sender);
     }
 
-    function _distributeReward(address[] _winners, address[] _winningVoters) private {
+    function _distributeReward(address[] _winners, address[] _winningVoters, address rewarder) private {
 
         // pay out reward allocated to voters
         if (_winningVoters.length > 0) {
@@ -238,7 +238,7 @@ contract TranscriptionRequest {
         }
 
         // maybe any leftover ether can go to the one who resolved the conflict
-        selfdestruct(requester);
+        selfdestruct(rewarder);
         emit RewardReleased();
     }
 }
