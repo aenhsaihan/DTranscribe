@@ -4,7 +4,8 @@
   "description": "",
   "main": "truffle-config.js",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "dev": "next dev"
   },
   "scripts": {
     "dev": "next",
