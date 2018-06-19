@@ -346,6 +346,12 @@ contract(
           err.should.exist;
         }
       });
+
+      it('requester should be able to reward winner', async function() {
+        await transcriptionRequest.rewardWinner(transcriber, {
+          from: requester
+        });
+      });
     });
   }
 );

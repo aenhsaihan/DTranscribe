@@ -225,8 +225,7 @@ contract TranscriptionRequest {
         if (_winningVoters.length > 0) {
             // the 5% to voters is hardcoded for now
             uint voterReward = ((reward * 5) / 100) / _winningVoters.length;
-            uint i = 0;
-            for (i; i < _winningVoters.length; i++) {
+            for (uint i = 0; i < _winningVoters.length; i++) {
                 address winningVoter = _winningVoters[i];
                 winningVoter.transfer(voterReward);
             }
