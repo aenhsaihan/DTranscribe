@@ -52,6 +52,10 @@ contract TranscriptionFactory {
     function getTranscriptionRequestsCount() public view returns (uint) {
         return deployedTranscriptionRequests.length;
     }
+
+    function getDeployedTranscriptionRequests() view public returns (address[]) {
+        return deployedTranscriptionRequests;
+    }
 }
 
 contract TranscriptionRequest {
