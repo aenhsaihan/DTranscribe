@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import factory from '../ethereum/factory';
 
 class TranscriptionIndex extends Component {
-  async componentDidMount() {
+  static async getInitialProps() {
     const transcriptionRequests = await factory.getDeployedTranscriptionRequests.call();
 
-    console.log(transcriptionRequests);
+    return {
+      transcriptionRequests
+    };
   }
 
   render() {
-    return <div>Transcription Index!</div>;
+    return <div>{this.props.transcriptionRequests[0]}</div>;
   }
 }
 
