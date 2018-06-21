@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio } from 'semantic-ui-react';
+import { Dropdown, Form, Button, Input, Radio } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
+
+import countryOptions from '../../common';
 
 class TranscriptionRequestNew extends Component {
   state = {};
@@ -22,7 +24,6 @@ class TranscriptionRequestNew extends Component {
               value="0"
               checked={this.state.requestType === '0'}
               onChange={this.handleChange}
-              defaultChecked
             />
           </Form.Field>
           <Form.Field>
@@ -55,7 +56,12 @@ class TranscriptionRequestNew extends Component {
 
           <Form.Field>
             <label>Target language</label>
-            <input />
+            <Dropdown
+              placeholder="Select target language"
+              fluid
+              selection
+              options={countryOptions}
+            />
           </Form.Field>
 
           <Form.Field>
