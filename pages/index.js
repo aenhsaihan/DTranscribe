@@ -33,8 +33,14 @@ class TranscriptionIndex extends Component {
             href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css"
           />
           <h3>Open Transcription Requests</h3>
+          <Button
+            floated="right"
+            content="Create Request"
+            icon="add circle"
+            primary
+          />
+
           {this.renderTranscriptionRequests()}
-          <Button content="Create Request" icon="add circle" primary />
         </div>
       </Layout>
     );
