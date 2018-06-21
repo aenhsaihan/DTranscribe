@@ -1,14 +1,40 @@
 import React, { Component } from 'react';
-import { Form, Button, Input } from 'semantic-ui-react';
+import { Form, Button, Input, Radio } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 
 class TranscriptionRequestNew extends Component {
+  state = {};
+  handleChange = (e, { value }) => this.setState({ requestType: value });
+
   render() {
     return (
       <Layout>
         <h3>Create a Transcription Request</h3>
 
         <Form>
+          <Form.Field>
+            Request type: <b>{this.state.requestType}</b>
+          </Form.Field>
+          <Form.Field>
+            <Radio
+              label="Audio"
+              name="radioGroup"
+              value="0"
+              checked={this.state.requestType === '0'}
+              onChange={this.handleChange}
+              defaultChecked
+            />
+          </Form.Field>
+          <Form.Field>
+            <Radio
+              label="Text"
+              name="radioGroup"
+              value="1"
+              checked={this.state.requestType === '1'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+
           <Form.Field>
             <label>Request IPFS Hash</label>
             <Input
