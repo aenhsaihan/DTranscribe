@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card } from 'semantic-ui-react';
+import { Card, Button } from 'semantic-ui-react';
 import factory from '../ethereum/factory';
 
 class TranscriptionIndex extends Component {
@@ -32,6 +32,7 @@ class TranscriptionIndex extends Component {
         />
 
         {this.renderTranscriptionRequests()}
+        <Button content="Create Request" icon="add circle" primary />
       </div>
     );
   }
