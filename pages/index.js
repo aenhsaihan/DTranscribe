@@ -28,10 +28,6 @@ class TranscriptionIndex extends Component {
     return (
       <Layout>
         <div>
-          <link
-            rel="stylesheet"
-            href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css"
-          />
           <h3>Open Transcription Requests</h3>
           <Button
             floated="right"
