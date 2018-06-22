@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Dropdown, Form, Button, Input, Radio } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
+import factory from '../../ethereum/factory';
+import web3 from '../../ethereum/web3';
 
 import countryOptions from '../../common';
 
@@ -11,7 +13,8 @@ class TranscriptionRequestNew extends Component {
     durationOfTranscriptionPhase: '',
     durationOfVoting: '',
     targetLanguage: '',
-    targetAccent: ''
+    targetAccent: '',
+    reward: ''
   };
 
   handleChange = (e, { value }) => this.setState({ requestType: value });
@@ -23,32 +26,50 @@ class TranscriptionRequestNew extends Component {
   handleLanguageChange = (e, { value }) =>
     this.setState({ targetLanguage: value });
   handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
+  handleRewardChange = (e, { value }) => this.setState({ reward: value });
+
+  onSubmit = async event => {
+    event.preventDefault(); // prevents browser from submitting form
+
+    const accounts = await web3.eth.getAccounts();
+    await factory.createTranscriptionRequest(
+      this.state.requestType,
+      this.state.ipfsHash,
+      this.state.durationOfTranscriptionPhase,
+      this.state.durationOfVoting,
+      this.state.targetLanguage,
+      this.state.targetAccent,
+      {
+        from: accounts[0],
+        value: this.state.reward
+      }
+    );
+  };
 
   render() {
     return (
       <Layout>
         <h3>Create a Transcription Request</h3>
 
-        <Form>
-          <Form.Field>
-            Request type: <b>{this.state.requestType}</b>
-          </Form.Field>
+        <Form.Field>
+          <b>Request type: {this.state.requestType}</b>
+        </Form.Field>
+        <Button.Group size="large" vertical labeled icon>
+          <Button
+            icon="microphone"
+            content="Audio"
+            value="0"
+            onClick={this.handleChange}
+          />
+          <Button
+            icon="keyboard outline"
+            content="Text"
+            value="1"
+            onClick={this.handleChange}
+          />
+        </Button.Group>
 
-          <Button.Group size="large" vertical labeled icon>
-            <Button
-              icon="microphone"
-              content="Audio"
-              value="0"
-              onClick={this.handleChange}
-            />
-            <Button
-              icon="keyboard outline"
-              content="Text"
-              value="1"
-              onClick={this.handleChange}
-            />
-          </Button.Group>
-
+        <Form onSubmit={this.onSubmit}>
           <Form.Field>
             <label>Request IPFS Hash</label>
             <Input
@@ -97,9 +118,19 @@ class TranscriptionRequestNew extends Component {
               onChange={this.handleAccentChange}
             />
           </Form.Field>
-        </Form>
 
-        <Button primary>Create!</Button>
+          <Form.Field>
+            <label>Reward</label>
+            <Input
+              label="wei"
+              labelPosition="right"
+              value={this.state.reward}
+              onChange={this.handleRewardChange}
+            />
+          </Form.Field>
+
+          <Button primary>Create!</Button>
+        </Form>
       </Layout>
     );
   }
