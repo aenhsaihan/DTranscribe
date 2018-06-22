@@ -7,15 +7,22 @@ import countryOptions from '../../common';
 class TranscriptionRequestNew extends Component {
   state = {
     requestType: '',
+    ipfsHash: '',
     durationOfTranscriptionPhase: '',
-    durationOfVoting: ''
+    durationOfVoting: '',
+    targetLanguage: '',
+    targetAccent: ''
   };
 
   handleChange = (e, { value }) => this.setState({ requestType: value });
+  handleIPFSChange = (e, { value }) => this.setState({ ipfsHash: value });
   handleDurationOfTranscriptionChange = (e, { value }) =>
     this.setState({ durationOfTranscriptionPhase: value });
   handleDurationOfVotingChange = (e, { value }) =>
     this.setState({ durationOfVoting: value });
+  handleLanguageChange = (e, { value }) =>
+    this.setState({ targetLanguage: value });
+  handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
 
   render() {
     return (
@@ -47,6 +54,8 @@ class TranscriptionRequestNew extends Component {
             <Input
               label="https://ipfs.io/ipfs/"
               placeholder="QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i"
+              value={this.state.ipfsHash}
+              onChange={this.handleIPFSChange}
             />
           </Form.Field>
 
@@ -77,12 +86,16 @@ class TranscriptionRequestNew extends Component {
               fluid
               selection
               options={countryOptions}
+              onChange={this.handleLanguageChange}
             />
           </Form.Field>
 
           <Form.Field>
             <label>Target accent</label>
-            <input />
+            <Input
+              value={this.state.targetAccent}
+              onChange={this.handleAccentChange}
+            />
           </Form.Field>
         </Form>
 
