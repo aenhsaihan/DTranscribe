@@ -17,24 +17,21 @@ class TranscriptionRequestNew extends Component {
           <Form.Field>
             Request type: <b>{this.state.requestType}</b>
           </Form.Field>
-          <Form.Field>
-            <Radio
-              label="Audio"
-              name="radioGroup"
+
+          <Button.Group size="large" vertical labeled icon>
+            <Button
+              icon="microphone"
+              content="Audio"
               value="0"
-              checked={this.state.requestType === '0'}
-              onChange={this.handleChange}
+              onClick={this.handleChange}
             />
-          </Form.Field>
-          <Form.Field>
-            <Radio
-              label="Text"
-              name="radioGroup"
+            <Button
+              icon="keyboard outline"
+              content="Text"
               value="1"
-              checked={this.state.requestType === '1'}
-              onChange={this.handleChange}
+              onClick={this.handleChange}
             />
-          </Form.Field>
+          </Button.Group>
 
           <Form.Field>
             <label>Request IPFS Hash</label>
