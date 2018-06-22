@@ -5,8 +5,17 @@ import Layout from '../../components/Layout';
 import countryOptions from '../../common';
 
 class TranscriptionRequestNew extends Component {
-  state = {};
+  state = {
+    requestType: '',
+    durationOfTranscriptionPhase: '',
+    durationOfVoting: ''
+  };
+
   handleChange = (e, { value }) => this.setState({ requestType: value });
+  handleDurationOfTranscriptionChange = (e, { value }) =>
+    this.setState({ durationOfTranscriptionPhase: value });
+  handleDurationOfVotingChange = (e, { value }) =>
+    this.setState({ durationOfVoting: value });
 
   render() {
     return (
@@ -43,12 +52,22 @@ class TranscriptionRequestNew extends Component {
 
           <Form.Field>
             <label>Duration of transcription phase</label>
-            <input />
+            <Input
+              label="seconds"
+              labelPosition="right"
+              value={this.state.durationOfTranscriptionPhase}
+              onChange={this.handleDurationOfTranscriptionChange}
+            />
           </Form.Field>
 
           <Form.Field>
             <label>Duration of voting</label>
-            <input />
+            <Input
+              label="seconds"
+              labelPosition="right"
+              value={this.state.durationOfVoting}
+              onChange={this.handleDurationOfVotingChange}
+            />
           </Form.Field>
 
           <Form.Field>
