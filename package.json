@@ -8,7 +8,7 @@
     "dev": "next dev"
   },
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start"
   },
