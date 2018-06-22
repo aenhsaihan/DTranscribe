@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Dropdown, Form, Button, Input, Radio } from 'semantic-ui-react';
+import {
+  Dropdown,
+  Form,
+  Button,
+  Input,
+  Radio,
+  Message
+} from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
@@ -14,7 +21,8 @@ class TranscriptionRequestNew extends Component {
     durationOfVoting: '',
     targetLanguage: '',
     targetAccent: '',
-    reward: ''
+    reward: '',
+    errorMessage: ''
   };
 
   handleChange = (e, { value }) => this.setState({ requestType: value });
@@ -31,19 +39,23 @@ class TranscriptionRequestNew extends Component {
   onSubmit = async event => {
     event.preventDefault(); // prevents browser from submitting form
 
-    const accounts = await web3.eth.getAccounts();
-    await factory.createTranscriptionRequest(
-      this.state.requestType,
-      this.state.ipfsHash,
-      this.state.durationOfTranscriptionPhase,
-      this.state.durationOfVoting,
-      this.state.targetLanguage,
-      this.state.targetAccent,
-      {
-        from: accounts[0],
-        value: this.state.reward
-      }
-    );
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await factory.createTranscriptionRequest(
+        this.state.requestType,
+        this.state.ipfsHash,
+        this.state.durationOfTranscriptionPhase,
+        this.state.durationOfVoting,
+        this.state.targetLanguage,
+        this.state.targetAccent,
+        {
+          from: accounts[0],
+          value: this.state.reward
+        }
+      );
+    } catch (err) {
+      this.setState({ errorMessage: err.message });
+    }
   };
 
   render() {
@@ -69,7 +81,7 @@ class TranscriptionRequestNew extends Component {
           />
         </Button.Group>
 
-        <Form onSubmit={this.onSubmit}>
+        <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
           <Form.Field>
             <label>Request IPFS Hash</label>
             <Input
@@ -128,6 +140,8 @@ class TranscriptionRequestNew extends Component {
               onChange={this.handleRewardChange}
             />
           </Form.Field>
+
+          <Message error header="Oops!" content={this.state.errorMessage} />
 
           <Button primary>Create!</Button>
         </Form>
