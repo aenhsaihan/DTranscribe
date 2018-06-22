@@ -10,6 +10,7 @@ import {
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
+import { Link, Router } from '../../routes';
 
 import countryOptions from '../../common';
 
@@ -56,6 +57,9 @@ class TranscriptionRequestNew extends Component {
           value: this.state.reward
         }
       );
+
+      // route user to transcription requests page
+      Router.pushRoute('/');
     } catch (err) {
       this.setState({ errorMessage: err.message });
     } finally {
