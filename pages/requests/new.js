@@ -22,7 +22,8 @@ class TranscriptionRequestNew extends Component {
     targetLanguage: '',
     targetAccent: '',
     reward: '',
-    errorMessage: ''
+    errorMessage: '',
+    loading: false
   };
 
   handleChange = (e, { value }) => this.setState({ requestType: value });
@@ -38,6 +39,8 @@ class TranscriptionRequestNew extends Component {
 
   onSubmit = async event => {
     event.preventDefault(); // prevents browser from submitting form
+
+    this.setState({ loading: true, errorMessage: '' });
 
     try {
       const accounts = await web3.eth.getAccounts();
@@ -55,6 +58,8 @@ class TranscriptionRequestNew extends Component {
       );
     } catch (err) {
       this.setState({ errorMessage: err.message });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
@@ -143,7 +148,9 @@ class TranscriptionRequestNew extends Component {
 
           <Message error header="Oops!" content={this.state.errorMessage} />
 
-          <Button primary>Create!</Button>
+          <Button loading={this.state.loading} primary>
+            Create!
+          </Button>
         </Form>
       </Layout>
     );
