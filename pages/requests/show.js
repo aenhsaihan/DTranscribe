@@ -47,18 +47,18 @@ class RequestShow extends Component {
         style: { overflowWrap: 'break-word' }
       },
       {
-        header: web3.utils.fromWei(reward, 'ether'),
+        header: web3.utils.fromWei(`${reward}`, 'ether'),
         meta: 'Reward (ETH)',
         description:
           'Winning transcriber and voters will win this reward if chosen'
       },
       {
-        header: requestType,
+        header: requestType.toString(),
         meta: 'Request type',
         description: 'Desired format of the transcription'
       },
       {
-        header: transcriptionsCount,
+        header: transcriptionsCount.toString(),
         meta: 'Transcriptions',
         description: 'Number of transcriptions already submitted'
       },
@@ -75,18 +75,18 @@ class RequestShow extends Component {
           'Requester would like the transcriber to have the specified accent'
       },
       {
-        header: startTime,
+        header: startTime.toString(),
         meta: 'Start time of request',
         description: 'The beginning of the request made'
       },
       {
-        header: transcriptionPhaseEndTime,
+        header: transcriptionPhaseEndTime.toString(),
         meta: 'End time of transcription submittal phase',
         description:
           'Duration of the transcription submittal phase before voting begins'
       },
       {
-        header: votingEndTime,
+        header: votingEndTime.toString(),
         meta: 'End time of voting',
         description:
           'Duration of voting after transcription submittal phase has ended'
