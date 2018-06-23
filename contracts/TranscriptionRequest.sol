@@ -244,4 +244,35 @@ contract TranscriptionRequest {
         selfdestruct(rewarder);
         emit RewardReleased();
     }
+
+    function getSummary() public view
+    returns (
+      uint,
+      TranscriptionRequest.RequestType,
+      string,
+      uint,
+      uint,
+      uint,
+      bytes,
+      bytes,
+      uint,
+      address
+    ) {
+        return (
+          reward,
+          typeOfRequest,
+          requestIPFSHash,
+          startTime,
+          transcriptionPhaseEndTime,
+          votingEndTime,
+          targetLanguage,
+          targetAccent,
+          transcriptions.length,
+          requester
+        );
+    }
+
+    function getTranscriptionsCount() view public returns (uint) {
+        return transcriptions.length;
+    }
 }
