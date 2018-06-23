@@ -3,6 +3,7 @@ import { Card } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 import web3 from '../../ethereum/web3';
+import TranscribeForm from '../../components/TranscribeForm';
 
 class RequestShow extends Component {
   static async getInitialProps(props) {
@@ -100,6 +101,7 @@ class RequestShow extends Component {
       <Layout>
         <h3>Request Show</h3>
         {this.renderCards()}
+        <TranscribeForm />
       </Layout>
     );
   }
