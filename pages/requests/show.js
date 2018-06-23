@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
+import web3 from '../../ethereum/web3';
 
 class RequestShow extends Component {
   static async getInitialProps(props) {
@@ -45,8 +46,8 @@ class RequestShow extends Component {
         style: { overflowWrap: 'break-word' }
       },
       {
-        header: reward,
-        meta: 'Reward (wei)',
+        header: web3.utils.fromWei(reward, 'ether'),
+        meta: 'Reward (ETH)',
         description:
           'Winning transcriber and voters will win this reward if chosen'
       },
