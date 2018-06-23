@@ -8,9 +8,18 @@ class RequestShow extends Component {
 
     const summary = await transcriptionRequest.getSummary.call();
 
-    console.log(summary);
-
-    return {};
+    return {
+      reward: summary[0],
+      requestType: summary[1],
+      requestIPFSHash: summary[2],
+      startTime: summary[3],
+      transcriptionPhaseEndTime: summary[4],
+      votingEndTime: summary[5],
+      targetLanguage: summary[6],
+      targetAccent: summary[7],
+      transcriptionsCount: summary[8],
+      requester: summary[9]
+    };
   }
 
   render() {
