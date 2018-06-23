@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Card } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 
@@ -22,10 +23,37 @@ class RequestShow extends Component {
     };
   }
 
+  renderCards() {
+    const {
+      reward,
+      requestType,
+      requestIPFSHash,
+      startTime,
+      transcriptionPhaseEndTime,
+      votingEndTime,
+      targetLanguage,
+      targetAccent,
+      transcriptionsCount,
+      requester
+    } = this.props;
+
+    const items = [
+      {
+        header: requester,
+        meta: 'Address of requester',
+        description: 'The requester created this transcription request',
+        style: { overflowWrap: 'break-word' }
+      }
+    ];
+
+    return <Card.Group items={items} />;
+  }
+
   render() {
     return (
       <Layout>
         <h3>Request Show</h3>
+        {this.renderCards()}
       </Layout>
     );
   }
