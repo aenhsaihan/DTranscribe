@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import Layout from '../../components/Layout';
+import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 
 class RequestShow extends Component {
   static async getInitialProps(props) {
-    console.log(props.query.address);
+    const transcriptionRequest = TranscriptionRequest(props.query.address);
+
+    const summary = await transcriptionRequest.getSummary.call();
+
+    console.log(summary);
+
     return {};
   }
 
