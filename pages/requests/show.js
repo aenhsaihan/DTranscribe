@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card } from 'semantic-ui-react';
+import { Card, Grid } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 import web3 from '../../ethereum/web3';
@@ -100,8 +100,13 @@ class RequestShow extends Component {
     return (
       <Layout>
         <h3>Request Show</h3>
-        {this.renderCards()}
-        <TranscribeForm />
+        <Grid>
+          <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
+
+          <Grid.Column width={6}>
+            <TranscribeForm />
+          </Grid.Column>
+        </Grid>
       </Layout>
     );
   }
