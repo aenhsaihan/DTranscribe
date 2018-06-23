@@ -17,7 +17,11 @@ class TranscriptionIndex extends Component {
     const items = this.props.transcriptionRequests.map(address => {
       return {
         header: address,
-        description: <a>View Transcription Request</a>,
+        description: (
+          <Link route={`/requests/${address}`}>
+            <a>View Transcription Request</a>
+          </Link>
+        ),
         fluid: true
       };
     });
