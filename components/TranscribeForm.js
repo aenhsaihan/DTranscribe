@@ -16,7 +16,7 @@ class TranscribeForm extends Component {
 
     const transcriptionRequest = TranscriptionRequest(this.props.address);
 
-    this.setState({ loading: true });
+    this.setState({ loading: true, errorMessage: '' });
 
     try {
       const accounts = await web3.eth.getAccounts();
