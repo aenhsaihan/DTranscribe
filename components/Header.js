@@ -10,9 +10,13 @@ export default () => {
       </Link>
 
       <Menu.Menu position="right">
-        <Menu.Item>Requests</Menu.Item>
+        <Link route="/">
+          <a className="item">Requests</a>
+        </Link>
 
-        <Menu.Item>+</Menu.Item>
+        <Link route="/requests/new">
+          <a className="item">+</a>
+        </Link>
       </Menu.Menu>
     </Menu>
   );
