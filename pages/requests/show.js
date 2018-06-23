@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Card, Grid } from 'semantic-ui-react';
+import { Card, Grid, Button } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 import web3 from '../../ethereum/web3';
 import TranscribeForm from '../../components/TranscribeForm';
+import { Link } from '../../routes';
 
 class RequestShow extends Component {
   static async getInitialProps(props) {
@@ -102,7 +103,14 @@ class RequestShow extends Component {
       <Layout>
         <h3>Request Show</h3>
         <Grid>
-          <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
+          <Grid.Column width={10}>
+            {this.renderCards()}
+            <Link route={`/requests/${this.props.address}/transcriptions`}>
+              <a>
+                <Button primary>View Transcriptions</Button>
+              </a>
+            </Link>
+          </Grid.Column>
 
           <Grid.Column width={6}>
             <TranscribeForm address={this.props.address} />
