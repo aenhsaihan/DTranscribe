@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, Button } from 'semantic-ui-react';
 import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
+import { Link } from '../routes';
 
 class TranscriptionIndex extends Component {
   static async getInitialProps() {
@@ -29,12 +30,17 @@ class TranscriptionIndex extends Component {
       <Layout>
         <div>
           <h3>Open Transcription Requests</h3>
-          <Button
-            floated="right"
-            content="Create Request"
-            icon="add circle"
-            primary
-          />
+
+          <Link route="/requests/new">
+            <a>
+              <Button
+                floated="right"
+                content="Create Request"
+                icon="add circle"
+                primary
+              />
+            </a>
+          </Link>
 
           {this.renderTranscriptionRequests()}
         </div>
