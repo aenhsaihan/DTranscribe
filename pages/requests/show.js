@@ -12,6 +12,7 @@ class RequestShow extends Component {
     const summary = await transcriptionRequest.getSummary.call();
 
     return {
+      address: props.query.address,
       reward: summary[0],
       requestType: summary[1],
       requestIPFSHash: summary[2],
@@ -104,7 +105,7 @@ class RequestShow extends Component {
           <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
 
           <Grid.Column width={6}>
-            <TranscribeForm />
+            <TranscribeForm address={this.props.address} />
           </Grid.Column>
         </Grid>
       </Layout>
