@@ -43,6 +43,51 @@ class RequestShow extends Component {
         meta: 'Address of requester',
         description: 'The requester created this transcription request',
         style: { overflowWrap: 'break-word' }
+      },
+      {
+        header: reward,
+        meta: 'Reward (wei)',
+        description:
+          'Winning transcriber and voters will win this reward if chosen'
+      },
+      {
+        header: requestType,
+        meta: 'Request type',
+        description: 'Desired format of the transcription'
+      },
+      {
+        header: transcriptionsCount,
+        meta: 'Transcriptions',
+        description: 'Number of transcriptions already submitted'
+      },
+      {
+        header: targetLanguage,
+        meta: 'Language requested',
+        description:
+          'Requester would like the transcription in the specified language'
+      },
+      {
+        header: targetAccent,
+        meta: 'Preferred accent',
+        description:
+          'Requester would like the transcriber to have the specified accent'
+      },
+      {
+        header: startTime,
+        meta: 'Start time of request',
+        description: 'The beginning of the request made'
+      },
+      {
+        header: transcriptionPhaseEndTime,
+        meta: 'End time of transcription submittal phase',
+        description:
+          'Duration of the transcription submittal phase before voting begins'
+      },
+      {
+        header: votingEndTime,
+        meta: 'End time of voting',
+        description:
+          'Duration of voting after transcription submittal phase has ended'
       }
     ];
 
