@@ -6,13 +6,17 @@ import { Router } from '../routes';
 
 class TranscribeForm extends Component {
   state = {
-    transcriptionIPFSHash: ''
+    transcriptionIPFSHash: '',
+    errorMessage: '',
+    loading: false
   };
 
   onSubmit = async event => {
     event.preventDefault();
 
     const transcriptionRequest = TranscriptionRequest(this.props.address);
+
+    this.setState({ loading: true });
 
     try {
       const accounts = await web3.eth.getAccounts();
@@ -24,12 +28,16 @@ class TranscribeForm extends Component {
       );
 
       Router.replaceRoute(`/requests/${this.props.address}`);
-    } catch (err) {}
+    } catch (err) {
+      this.setState({ errorMessage: err.message });
+    } finally {
+      this.setState({ loading: false, transcriptionIPFSHash: '' });
+    }
   };
 
   render() {
     return (
-      <Form onSubmit={this.onSubmit}>
+      <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
         <Form.Field>
           <label>Submit Transcription IPFS Hash here</label>
           <Input
@@ -41,7 +49,11 @@ class TranscribeForm extends Component {
             placeholder="QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i"
           />
         </Form.Field>
-        <Button primary>Transcribe!</Button>
+
+        <Message error header="Oops!" content={this.state.errorMessage} />
+        <Button primary loading={this.state.loading}>
+          Transcribe!
+        </Button>
       </Form>
     );
   }
