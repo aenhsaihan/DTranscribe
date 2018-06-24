@@ -10,6 +10,15 @@ class RequestShow extends Component {
   static async getInitialProps(props) {
     const transcriptionRequest = TranscriptionRequest(props.query.address);
 
+    const RequestTranscribed = transcriptionRequest.RequestTranscribed();
+    RequestTranscribed.watch((err, result) => {
+      if (err) {
+        console.log(`Request Transcribed Event error: ${err}`);
+      } else {
+        console.log(result.args);
+      }
+    });
+
     const summary = await transcriptionRequest.getSummary.call();
 
     return {
