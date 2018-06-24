@@ -19,15 +19,13 @@ class TranscriptionRow extends Component {
   render() {
     const { Row, Cell } = Table;
 
-    const [
-      votes,
-      typeOfRequest,
-      ipfsHash,
-      transcriber
-    ] = this.props.transcription;
+    const { id, transcription } = this.props;
+
+    const [votes, typeOfRequest, ipfsHash, transcriber] = transcription;
 
     return (
       <Row>
+        <Cell>{id}</Cell>
         <Cell>{transcriber}</Cell>
         <Cell>{typeOfRequest.toNumber()}</Cell>
         <Cell>{ipfsHash}</Cell>

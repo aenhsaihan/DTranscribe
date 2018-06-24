@@ -45,6 +45,7 @@ class TranscriptionIndex extends Component {
         <Table>
           <Header>
             <Row>
+              <HeaderCell>ID</HeaderCell>
               <HeaderCell>Transcriber</HeaderCell>
               <HeaderCell>Type of Request</HeaderCell>
               <HeaderCell>IPFS Hash</HeaderCell>
