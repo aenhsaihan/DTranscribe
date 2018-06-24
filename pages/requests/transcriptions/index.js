@@ -49,6 +49,7 @@ class TranscriptionIndex extends Component {
               <HeaderCell>IPFS Hash</HeaderCell>
               <HeaderCell>Votes</HeaderCell>
               <HeaderCell>Vote?</HeaderCell>
+              <HeaderCell>Choose</HeaderCell>
             </Row>
           </Header>
           <Body>{this.renderRows()}</Body>
