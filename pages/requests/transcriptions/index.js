@@ -3,6 +3,7 @@ import { Button, Table } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import Layout from '../../../components/Layout';
 import TranscriptionRequest from '../../../ethereum/transcriptionRequest';
+import TranscriptionRow from '../../../components/TranscriptionRow';
 
 class TranscriptionIndex extends Component {
   static async getInitialProps(props) {
@@ -20,6 +21,19 @@ class TranscriptionIndex extends Component {
 
     return { address, transcriptions, transcriptionsCount };
   }
+
+  renderRows() {
+    return this.props.transcriptions.map((transcription, index) => {
+      return (
+        <TranscriptionRow
+          key={index}
+          transcription={transcription}
+          address={this.props.address}
+        />
+      );
+    });
+  }
+
   render() {
     const { Header, Row, HeaderCell, Body } = Table;
 
@@ -37,6 +51,7 @@ class TranscriptionIndex extends Component {
               <HeaderCell>Vote?</HeaderCell>
             </Row>
           </Header>
+          <Body>{this.renderRows()}</Body>
         </Table>
       </Layout>
     );
