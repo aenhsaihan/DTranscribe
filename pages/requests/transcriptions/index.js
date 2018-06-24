@@ -18,7 +18,7 @@ class TranscriptionIndex extends Component {
         })
     );
 
-    return { address };
+    return { address, transcriptions, transcriptionsCount };
   }
   render() {
     return (
