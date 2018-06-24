@@ -16,6 +16,18 @@ class TranscriptionRow extends Component {
     });
   };
 
+  onChoose = async () => {
+    const transcriptionRequest = TranscriptionRequest(this.props.address);
+
+    const transcriberId = this.props.id;
+    const transcriber = this.props.transcription[3];
+
+    const [account] = await web3.eth.getAccounts();
+    await transcriptionRequest.rewardWinner(transcriber, transcriberId, {
+      from: account
+    });
+  };
+
   render() {
     const { Row, Cell } = Table;
 
@@ -36,7 +48,7 @@ class TranscriptionRow extends Component {
           </Button>
         </Cell>
         <Cell>
-          <Button color="blue" basic>
+          <Button color="blue" basic onClick={this.onChoose}>
             Choose
           </Button>
         </Cell>
