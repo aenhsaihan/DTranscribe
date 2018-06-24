@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Table } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import Layout from '../../../components/Layout';
 import TranscriptionRequest from '../../../ethereum/transcriptionRequest';
@@ -21,14 +21,23 @@ class TranscriptionIndex extends Component {
     return { address, transcriptions, transcriptionsCount };
   }
   render() {
+    const { Header, Row, HeaderCell, Body } = Table;
+
     return (
       <Layout>
         <h3>Transcriptions</h3>
-        <Link>
-          <a>
-            <Button primary>Add Request</Button>
-          </a>
-        </Link>
+
+        <Table>
+          <Header>
+            <Row>
+              <HeaderCell>Transcriber</HeaderCell>
+              <HeaderCell>Type of Request</HeaderCell>
+              <HeaderCell>IPFS Hash</HeaderCell>
+              <HeaderCell>Votes</HeaderCell>
+              <HeaderCell>Vote?</HeaderCell>
+            </Row>
+          </Header>
+        </Table>
       </Layout>
     );
   }
