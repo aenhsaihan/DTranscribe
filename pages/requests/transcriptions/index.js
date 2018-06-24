@@ -27,6 +27,7 @@ class TranscriptionIndex extends Component {
       return (
         <TranscriptionRow
           key={index}
+          id={index}
           transcription={transcription}
           address={this.props.address}
         />

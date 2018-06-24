@@ -181,7 +181,7 @@ contract(
         now.should.be.below(transcriptionPhaseEndTime.toNumber());
 
         try {
-          await transcriptionRequest.voteForTranscriber(transcriber, {
+          await transcriptionRequest.voteForTranscriber(transcriber, 0, {
             from: voterOne
           });
           assert(
@@ -197,7 +197,7 @@ contract(
     describe('Transcription Request: Voting Phase', () => {
       it('requester should not be able to vote for a transcription', async function() {
         try {
-          await transcriptionRequest.voteForTranscriber(transcriber, {
+          await transcriptionRequest.voteForTranscriber(transcriber, 0, {
             from: requester
           });
           assert(
@@ -211,7 +211,7 @@ contract(
 
       it('transcriber should not be able to vote for his own transcription', async function() {
         try {
-          await transcriptionRequest.voteForTranscriber(transcriber, {
+          await transcriptionRequest.voteForTranscriber(transcriber, 0, {
             from: transcriber
           });
           assert(
@@ -225,7 +225,7 @@ contract(
 
       it('voter should not be able to vote for a non-existent transcription', async function() {
         try {
-          await transcriptionRequest.voteForTranscriber(bogusTranscriber, {
+          await transcriptionRequest.voteForTranscriber(bogusTranscriber, 0, {
             from: voterOne
           });
           assert(
@@ -252,12 +252,12 @@ contract(
           votingEndTime.toNumber()
         );
 
-        await transcriptionRequest.voteForTranscriber(transcriber, {
+        await transcriptionRequest.voteForTranscriber(transcriber, 0, {
           from: voterOne
         });
 
-        const votedTranscription = await transcriptionRequest.transcriptionsMapping.call(
-          transcriber
+        const votedTranscription = await transcriptionRequest.transcriptions.call(
+          0
         );
 
         const votes = votedTranscription[0].toNumber();
@@ -276,13 +276,14 @@ contract(
       });
 
       it('another voter should be able to vote for the same transcription', async function() {
-        await transcriptionRequest.voteForTranscriber(transcriber, {
+        await transcriptionRequest.voteForTranscriber(transcriber, 0, {
           from: voterTwo
         });
 
-        const votedTranscription = await transcriptionRequest.transcriptionsMapping.call(
-          transcriber
+        const votedTranscription = await transcriptionRequest.transcriptions.call(
+          0
         );
+
         const votes = votedTranscription[0].toNumber();
         votes.should.equal(2);
       });
@@ -338,7 +339,7 @@ contract(
 
       it('only requester should be able to reward winner', async function() {
         try {
-          await transcriptionRequest.rewardWinner(transcriber, {
+          await transcriptionRequest.rewardWinner(transcriber, 0, {
             from: nonparticipant
           });
           assert(false, 'requester should not reward non-existent transcriber');
@@ -348,7 +349,7 @@ contract(
       });
 
       it('requester should be able to reward winner', async function() {
-        await transcriptionRequest.rewardWinner(transcriber, {
+        await transcriptionRequest.rewardWinner(transcriber, 0, {
           from: requester
         });
       });

@@ -90,7 +90,6 @@ contract TranscriptionRequest {
     address[] winners;
     address[] winningVoters;
 
-    mapping (address => Transcription) public transcriptionsMapping;
     mapping (address => bool) public verifiedTranscribers;
     mapping (address => bool) public verifiedVoters;
 
@@ -155,19 +154,17 @@ contract TranscriptionRequest {
             transcriber: msg.sender
             });
         transcriptions.push(transcription);
-        transcriptionsMapping[msg.sender] = transcription;
+
         verifiedTranscribers[msg.sender] = true;
 
         emit RequestTranscribed(msg.sender, typeOfRequest);
     }
 
-    function voteForTranscriber(address transcriber) public hasVotingStarted hasVotingEnded {
+    function voteForTranscriber(address transcriber, uint transcriberId) public hasVotingStarted hasVotingEnded {
         require(transcriber != msg.sender && msg.sender != requester && verifiedVoters[msg.sender] != true);
+        require(verifiedTranscribers[transcriber]);
 
-        Transcription storage transcription = transcriptionsMapping[transcriber];
-        // make sure that transcriber exists
-        require(transcription.transcriber != 0x0000000000000000000000000000000000000000);
-
+        Transcription storage transcription = transcriptions[transcriberId];
         transcription.voters.push(msg.sender);
         transcription.votes = transcription.voters.length;
 
@@ -182,10 +179,10 @@ contract TranscriptionRequest {
         emit RewardRefunded();
     }
 
-    function rewardWinner(address _winner) public onlyBy(requester) {
+    function rewardWinner(address _winner, uint transcriberId) public onlyBy(requester) {
         require(verifiedTranscribers[_winner]);
 
-        Transcription storage winningTranscription = transcriptionsMapping[_winner];
+        Transcription storage winningTranscription = transcriptions[transcriberId];
         winners.push(_winner);
 
         _distributeReward(winners, winningTranscription.voters, requester);
