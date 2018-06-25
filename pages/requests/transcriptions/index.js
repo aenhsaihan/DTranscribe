@@ -19,7 +19,9 @@ class TranscriptionIndex extends Component {
         })
     );
 
-    return { address, transcriptions, transcriptionsCount };
+    const rewardReleased = false;
+
+    return { address, transcriptions, transcriptionsCount, rewardReleased };
   }
 
   renderRows() {
@@ -30,6 +32,7 @@ class TranscriptionIndex extends Component {
           id={index}
           transcription={transcription}
           address={this.props.address}
+          rewardReleased={this.props.rewardReleased}
         />
       );
     });
@@ -37,6 +40,17 @@ class TranscriptionIndex extends Component {
 
   render() {
     const { Header, Row, HeaderCell, Body } = Table;
+
+    const transcriptionRequest = TranscriptionRequest(this.props.address);
+    const RewardReleased = transcriptionRequest.RewardReleased();
+    RewardReleased.watch((err, result) => {
+      if (err) {
+        console.log(`Reward Released Event error: ${err}`);
+      } else {
+        console.log('Reward released!');
+        this.setState({ rewardReleased: true });
+      }
+    });
 
     return (
       <Layout>

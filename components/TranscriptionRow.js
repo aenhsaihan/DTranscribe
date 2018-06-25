@@ -31,7 +31,7 @@ class TranscriptionRow extends Component {
   render() {
     const { Row, Cell } = Table;
 
-    const { id, transcription } = this.props;
+    const { id, transcription, rewardReleased } = this.props;
 
     const [votes, typeOfRequest, ipfsHash, transcriber] = transcription;
 
@@ -43,9 +43,11 @@ class TranscriptionRow extends Component {
         <Cell>{ipfsHash}</Cell>
         <Cell>{votes.toNumber()}</Cell>
         <Cell>
-          <Button color="green" basic onClick={this.onVote}>
-            Vote
-          </Button>
+          {rewardReleased ? null : (
+            <Button color="green" basic onClick={this.onVote}>
+              Vote
+            </Button>
+          )}
         </Cell>
         <Cell>
           <Button color="blue" basic onClick={this.onChoose}>
