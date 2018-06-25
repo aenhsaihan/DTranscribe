@@ -11,12 +11,13 @@ import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
 import { Link, Router } from '../../routes';
+import ipfs from '../../ethereum/ipfs';
 
 import countryOptions from '../../common';
 
 class TranscriptionRequestNew extends Component {
   state = {
-    requestType: '',
+    requestType: '0',
     ipfsHash: '',
     durationOfTranscriptionPhase: '',
     durationOfVoting: '',
@@ -24,7 +25,24 @@ class TranscriptionRequestNew extends Component {
     targetAccent: '',
     reward: '',
     errorMessage: '',
-    loading: false
+    loading: false,
+    buffer: ''
+  };
+
+  captureFile = event => {
+    event.stopPropagation();
+    event.preventDefault();
+    const file = event.target.files[0];
+    let reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => this.convertToBuffer(reader);
+  };
+
+  convertToBuffer = async reader => {
+    // file is converted to a buffer for upload to IPFS
+    const buffer = await Buffer.from(reader.result);
+    // set this buffer using es6 syntax
+    this.setState({ buffer });
   };
 
   handleChange = (e, { value }) => this.setState({ requestType: value });
@@ -38,11 +56,7 @@ class TranscriptionRequestNew extends Component {
   handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
   handleRewardChange = (e, { value }) => this.setState({ reward: value });
 
-  onSubmit = async event => {
-    event.preventDefault(); // prevents browser from submitting form
-
-    this.setState({ loading: true, errorMessage: '' });
-
+  submitTransaction = async () => {
     try {
       const accounts = await web3.eth.getAccounts();
       await factory.createTranscriptionRequest(
@@ -65,6 +79,20 @@ class TranscriptionRequestNew extends Component {
     } finally {
       this.setState({ loading: false });
     }
+  };
+
+  onSubmit = async event => {
+    event.preventDefault(); // prevents browser from submitting form
+
+    this.setState({ loading: true, errorMessage: '' });
+
+    // save document to IPFS, return its hash#, and set hash# to state
+    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+      console.log(err, ipfsHash);
+      this.setState({ ipfsHash: ipfsHash[0].hash });
+
+      this.submitTransaction();
+    });
   };
 
   render() {
@@ -93,12 +121,7 @@ class TranscriptionRequestNew extends Component {
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
           <Form.Field>
             <label>Request IPFS Hash</label>
-            <Input
-              label="https://ipfs.io/ipfs/"
-              placeholder="QmfWCE442XEYHoSWRTVtjKjNAsEDkDm4EF9zuTrgVmhZ9i"
-              value={this.state.ipfsHash}
-              onChange={this.handleIPFSChange}
-            />
+            <Input type="file" onChange={this.captureFile} />
           </Form.Field>
 
           <Form.Field>

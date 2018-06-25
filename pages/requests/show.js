@@ -69,6 +69,12 @@ class RequestShow extends Component {
         description: 'Desired format of the transcription'
       },
       {
+        header: requestIPFSHash,
+        meta: 'Request content',
+        description: 'Content to be transcribed',
+        style: { overflowWrap: 'break-word' }
+      },
+      {
         header: transcriptionsCount.toString(),
         meta: 'Transcriptions',
         description: 'Number of transcriptions already submitted'
