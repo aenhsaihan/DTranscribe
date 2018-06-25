@@ -56,43 +56,40 @@ class TranscriptionRequestNew extends Component {
   handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
   handleRewardChange = (e, { value }) => this.setState({ reward: value });
 
-  submitTransaction = async () => {
-    try {
-      const accounts = await web3.eth.getAccounts();
-      await factory.createTranscriptionRequest(
-        this.state.requestType,
-        this.state.ipfsHash,
-        this.state.durationOfTranscriptionPhase,
-        this.state.durationOfVoting,
-        this.state.targetLanguage,
-        this.state.targetAccent,
-        {
-          from: accounts[0],
-          value: this.state.reward
-        }
-      );
-
-      // route user to transcription requests page
-      Router.pushRoute('/');
-    } catch (err) {
-      this.setState({ errorMessage: err.message });
-    } finally {
-      this.setState({ loading: false });
-    }
-  };
-
   onSubmit = async event => {
     event.preventDefault(); // prevents browser from submitting form
 
     this.setState({ loading: true, errorMessage: '' });
 
-    // save document to IPFS, return its hash#, and set hash# to state
-    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+    await ipfs.add(this.state.buffer, submitTransaction);
+
+    submitTransaction = async (err, ipfsHash) => {
       console.log(err, ipfsHash);
       this.setState({ ipfsHash: ipfsHash[0].hash });
 
-      this.submitTransaction();
-    });
+      try {
+        const accounts = await web3.eth.getAccounts();
+        await factory.createTranscriptionRequest(
+          this.state.requestType,
+          this.state.ipfsHash,
+          this.state.durationOfTranscriptionPhase,
+          this.state.durationOfVoting,
+          this.state.targetLanguage,
+          this.state.targetAccent,
+          {
+            from: accounts[0],
+            value: this.state.reward
+          }
+        );
+
+        // route user to transcription requests page
+        Router.pushRoute('/');
+      } catch (err) {
+        this.setState({ errorMessage: err.message });
+      } finally {
+        this.setState({ loading: false });
+      }
+    };
   };
 
   render() {
