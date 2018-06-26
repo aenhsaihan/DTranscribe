@@ -13,7 +13,6 @@ import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
 import { Link, Router } from '../../routes';
 import ipfs from '../../ethereum/ipfs';
-// import CaptureFile from '../../captureFile';
 
 import countryOptions from '../../common';
 
@@ -41,11 +40,6 @@ class TranscriptionRequestNew extends Component {
     this.setState({ targetLanguage: value });
   handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
   handleRewardChange = (e, { value }) => this.setState({ reward: value });
-
-  // captureFile = async event => {
-  //   const fileCapturer = Object.create(CaptureFile);
-  //   fileCapturer.captureFile(event, this.saveBuffer);
-  // };
 
   saveBuffer = buffer => {
     this.setState({ buffer });
@@ -116,7 +110,6 @@ class TranscriptionRequestNew extends Component {
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
           <Form.Field>
             <label>Request IPFS Hash</label>
-            {/* <Input type="file" onChange={this.captureFile} /> */}
             <InputIPFS saveBuffer={this.saveBuffer} />
           </Form.Field>
 
