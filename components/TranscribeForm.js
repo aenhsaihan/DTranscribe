@@ -53,7 +53,7 @@ class TranscribeForm extends Component {
     return (
       <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
         <Form.Field>
-          <label>Submit Transcription IPFS Hash here</label>
+          <label>Submit Transcription</label>
           <InputIPFS saveBuffer={this.saveBuffer} />
         </Form.Field>
 

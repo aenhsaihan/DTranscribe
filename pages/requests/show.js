@@ -69,12 +69,6 @@ class RequestShow extends Component {
         description: 'Desired format of the transcription'
       },
       {
-        header: requestIPFSHash,
-        meta: 'Request content',
-        description: 'Content to be transcribed',
-        style: { overflowWrap: 'break-word' }
-      },
-      {
         header: transcriptionsCount.toString(),
         meta: 'Transcriptions',
         description: 'Number of transcriptions already submitted'
@@ -116,12 +110,23 @@ class RequestShow extends Component {
   render() {
     return (
       <Layout>
-        <h3>Request Show</h3>
+        <h3>Transcription Request Details</h3>
         <Grid>
           <Grid.Row>
             <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
 
             <Grid.Column width={6}>
+              <Card
+                header={this.props.requestIPFSHash}
+                meta="Request content"
+                description="Content to be transcribed, please click card to see content"
+                style={{ overflowWrap: 'break-word' }}
+                fluid="true"
+                href={`https://gateway.ipfs.io/ipfs/${
+                  this.props.requestIPFSHash
+                }`}
+                color="blue"
+              />
               <TranscribeForm address={this.props.address} />
             </Grid.Column>
           </Grid.Row>
