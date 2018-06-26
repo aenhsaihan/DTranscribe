@@ -12,6 +12,7 @@ import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
 import { Link, Router } from '../../routes';
 import ipfs from '../../ethereum/ipfs';
+import CaptureFile from '../../captureFile';
 
 import countryOptions from '../../common';
 
@@ -29,22 +30,6 @@ class TranscriptionRequestNew extends Component {
     buffer: ''
   };
 
-  captureFile = event => {
-    event.stopPropagation();
-    event.preventDefault();
-    const file = event.target.files[0];
-    let reader = new window.FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onloadend = () => this.convertToBuffer(reader);
-  };
-
-  convertToBuffer = async reader => {
-    // file is converted to a buffer for upload to IPFS
-    const buffer = await Buffer.from(reader.result);
-    // set this buffer using es6 syntax
-    this.setState({ buffer });
-  };
-
   handleChange = (e, { value }) => this.setState({ requestType: value });
   handleIPFSChange = (e, { value }) => this.setState({ ipfsHash: value });
   handleDurationOfTranscriptionChange = (e, { value }) =>
@@ -55,6 +40,15 @@ class TranscriptionRequestNew extends Component {
     this.setState({ targetLanguage: value });
   handleAccentChange = (e, { value }) => this.setState({ targetAccent: value });
   handleRewardChange = (e, { value }) => this.setState({ reward: value });
+
+  captureFile = async event => {
+    const fileCapturer = Object.create(CaptureFile);
+    fileCapturer.captureFile(event, this.saveBuffer);
+  };
+
+  saveBuffer = buffer => {
+    this.setState({ buffer });
+  };
 
   submitTransaction = async () => {
     try {
