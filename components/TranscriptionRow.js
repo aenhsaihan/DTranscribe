@@ -40,7 +40,11 @@ class TranscriptionRow extends Component {
         <Cell>{id}</Cell>
         <Cell>{transcriber}</Cell>
         <Cell>{typeOfRequest.toNumber()}</Cell>
-        <Cell>{ipfsHash}</Cell>
+        <Cell>
+          <a href={`https://gateway.ipfs.io/ipfs/${ipfsHash}`} target="_blank">
+            {ipfsHash}
+          </a>
+        </Cell>
         <Cell>{votes.toNumber()}</Cell>
         <Cell>
           {rewardReleased ? null : (
