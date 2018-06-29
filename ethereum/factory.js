@@ -15,7 +15,7 @@ if (typeof TranscriptionFactory.currentProvider.sendAsync !== 'function') {
 }
 
 const instance = TranscriptionFactory.at(
-  '0x1ff10204d5343698177d4f066940ec1708c2559e'
+  '0x23be7ec1cb6985986efffdef83c3511cf940f562'
 );
 
 export default instance;
