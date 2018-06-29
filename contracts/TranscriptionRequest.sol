@@ -114,12 +114,17 @@ contract TranscriptionRequest {
     }
 
     modifier hasVotingStarted() {
-        require(now >= transcriptionPhaseEndTime);
+        require(now > transcriptionPhaseEndTime);
+        _;
+    }
+
+    modifier isVoteOngoing() {
+        require(now <= votingEndTime);
         _;
     }
 
     modifier hasVotingEnded() {
-        require(now <= votingEndTime);
+        require(now > votingEndTime);
         _;
     }
 
@@ -160,7 +165,7 @@ contract TranscriptionRequest {
         emit RequestTranscribed(msg.sender, typeOfRequest);
     }
 
-    function voteForTranscriber(address transcriber, uint transcriberId) public hasVotingStarted hasVotingEnded {
+    function voteForTranscriber(address transcriber, uint transcriberId) public hasVotingStarted isVoteOngoing {
         require(transcriber != msg.sender && msg.sender != requester && verifiedVoters[msg.sender] != true);
         require(verifiedTranscribers[transcriber]);
 
@@ -207,7 +212,7 @@ contract TranscriptionRequest {
             if (currentVotes <= currentTranscription.votes) {
                 winners.push(currentTranscriber);
 
-                for (uint j = 0; i < currentVoters.length; j++) {
+                for (uint j = 0; j < currentVoters.length; j++) {
                     address currentVoter = currentVoters[j];
                     winningVoters.push(currentVoter);
                 }
@@ -223,17 +228,17 @@ contract TranscriptionRequest {
 
         // pay out reward allocated to voters
         if (_winningVoters.length > 0) {
-            // the 5% to voters is hardcoded for now
-            uint voterReward = ((reward * 5) / 100) / _winningVoters.length;
+            uint voterReward = ((reward * 5) / 100) / _winningVoters.length; // the 5% to voters is hardcoded for now
+
             for (uint i = 0; i < _winningVoters.length; i++) {
                 address winningVoter = _winningVoters[i];
                 winningVoter.transfer(voterReward);
             }
         }
 
-        uint rewardForEachWinner = reward / _winners.length;
-        for (uint j = 0; i < _winners.length; j++) {
-            address winner = _winners[i];
+        uint rewardForEachWinner = address(this).balance / _winners.length;
+        for (uint j = 0; j < _winners.length; j++) {
+            address winner = _winners[j];
             winner.transfer(rewardForEachWinner);
         }
 
