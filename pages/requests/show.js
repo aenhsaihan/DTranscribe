@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
-import { Card, Grid, Button } from 'semantic-ui-react';
+import { Card, Grid, Button, Message } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import TranscriptionRequest from '../../ethereum/transcriptionRequest';
 import web3 from '../../ethereum/web3';
 import TranscribeForm from '../../components/TranscribeForm';
-import { Link } from '../../routes';
+import { Link, Router } from '../../routes';
 
 class RequestShow extends Component {
+  state = {
+    loading: false,
+    errorMessage: ''
+  };
+
   static async getInitialProps(props) {
     const transcriptionRequest = TranscriptionRequest(props.query.address);
 
@@ -35,6 +40,28 @@ class RequestShow extends Component {
       requester: summary[9]
     };
   }
+
+  askForRefund = async event => {
+    event.preventDefault();
+
+    this.setState({ loading: true, errorMessage: '' });
+
+    const transcriptionRequest = TranscriptionRequest(this.props.address);
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await transcriptionRequest.askForRefund({
+        from: accounts[0]
+      });
+
+      Router.replaceRoute('/');
+    } catch (err) {
+      console.log(err.message);
+      this.setState({ errorMessage: err.message });
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
 
   renderCards() {
     const {
@@ -111,6 +138,7 @@ class RequestShow extends Component {
     return (
       <Layout>
         <h3>Transcription Request Details</h3>
+
         <Grid>
           <Grid.Row>
             <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
@@ -121,7 +149,7 @@ class RequestShow extends Component {
                 meta="Request content"
                 description="Content to be transcribed, please click card to see content"
                 style={{ overflowWrap: 'break-word' }}
-                fluid="true"
+                fluid={true}
                 href={`https://gateway.ipfs.io/ipfs/${
                   this.props.requestIPFSHash
                 }`}
@@ -138,6 +166,14 @@ class RequestShow extends Component {
                   <Button primary>View Transcriptions</Button>
                 </a>
               </Link>
+
+              <Button
+                negative
+                onClick={this.askForRefund}
+                loading={this.state.loading}
+              >
+                Revoke Reward
+              </Button>
             </Grid.Column>
           </Grid.Row>
         </Grid>
