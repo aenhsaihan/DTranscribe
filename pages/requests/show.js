@@ -9,6 +9,7 @@ import { Link, Router } from '../../routes';
 class RequestShow extends Component {
   state = {
     loading: false,
+    noShowLoading: false,
     errorMessage: ''
   };
 
@@ -40,6 +41,28 @@ class RequestShow extends Component {
       requester: summary[9]
     };
   }
+
+  noShow = async event => {
+    event.preventDefault();
+
+    this.setState({ noShowLoading: true, errorMessage: '' });
+
+    const transcriptionRequest = TranscriptionRequest(this.props.address);
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await transcriptionRequest.noShow({
+        from: accounts[0]
+      });
+
+      Router.replaceRoute('/');
+    } catch (err) {
+      console.log(err.message);
+      this.setState({ errorMessage: err.message });
+    } finally {
+      this.setState({ noShowLoading: false });
+    }
+  };
 
   askForRefund = async event => {
     event.preventDefault();
@@ -173,6 +196,14 @@ class RequestShow extends Component {
                 loading={this.state.loading}
               >
                 Revoke Reward
+              </Button>
+
+              <Button
+                secondary
+                onClick={this.noShow}
+                loading={this.state.noShowLoading}
+              >
+                No Show
               </Button>
             </Grid.Column>
 
