@@ -160,7 +160,7 @@ class RequestShow extends Component {
           </Grid.Row>
 
           <Grid.Row>
-            <Grid.Column>
+            <Grid.Column width={10}>
               <Link route={`/requests/${this.props.address}/transcriptions`}>
                 <a>
                   <Button primary>View Transcriptions</Button>
@@ -174,6 +174,15 @@ class RequestShow extends Component {
               >
                 Revoke Reward
               </Button>
+            </Grid.Column>
+
+            <Grid.Column width={6}>
+              <Message
+                error
+                hidden={!this.state.errorMessage}
+                header="Oops!!!"
+                content={this.state.errorMessage}
+              />
             </Grid.Column>
           </Grid.Row>
         </Grid>
