@@ -1,5 +1,5 @@
 const countryOptions = [
-  { key: 'gb', value: 'gb', flag: 'gb', text: 'English' },
+  { key: 'gb', value: 'English', flag: 'gb', text: 'English' },
   { key: 'es', value: 'es', flag: 'es', text: 'Spanish' },
   { key: 'mn', value: 'mn', flag: 'mn', text: 'Mongolian' },
   { key: 'ru', value: 'ru', flag: 'ru', text: 'Russian' },

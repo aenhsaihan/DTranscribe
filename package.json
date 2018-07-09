@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "ipfs-api": "^22.1.0",
+    "moment": "^2.22.2",
     "next": "^6.0.3",
     "next-routes": "^1.4.2",
     "react": "^16.4.0",
