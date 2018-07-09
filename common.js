@@ -1,11 +1,11 @@
 const countryOptions = [
   { key: 'gb', value: 'English', flag: 'gb', text: 'English' },
-  { key: 'es', value: 'es', flag: 'es', text: 'Spanish' },
-  { key: 'mn', value: 'mn', flag: 'mn', text: 'Mongolian' },
-  { key: 'ru', value: 'ru', flag: 'ru', text: 'Russian' },
-  { key: 'bg', value: 'bg', flag: 'bg', text: 'Bulgarian' },
-  { key: 'jp', value: 'jp', flag: 'jp', text: 'Japanese' },
-  { key: 'th', value: 'th', flag: 'th', text: 'Thailand' }
+  { key: 'es', value: 'Spanish', flag: 'es', text: 'Spanish' },
+  { key: 'mn', value: 'Mongolian', flag: 'mn', text: 'Mongolian' },
+  { key: 'ru', value: 'Russian', flag: 'ru', text: 'Russian' },
+  { key: 'bg', value: 'Bulgarian', flag: 'bg', text: 'Bulgarian' },
+  { key: 'jp', value: 'Japanese', flag: 'jp', text: 'Japanese' },
+  { key: 'th', value: 'Thai', flag: 'th', text: 'Thailand' }
 ];
 
 export default countryOptions;
