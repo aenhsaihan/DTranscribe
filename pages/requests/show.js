@@ -124,13 +124,13 @@ class RequestShow extends Component {
         description: 'Number of transcriptions already submitted'
       },
       {
-        header: targetLanguage,
+        header: web3.utils.hexToAscii(targetLanguage),
         meta: 'Language requested',
         description:
           'Requester would like the transcription in the specified language'
       },
       {
-        header: targetAccent,
+        header: web3.utils.hexToAscii(targetAccent),
         meta: 'Preferred accent',
         description:
           'Requester would like the transcriber to have the specified accent'
