@@ -30,3 +30,7 @@ As anyone, I should be able to declare a no show if the requester has not yet ch
 When you're on the transcription request details page, hitting the back button to navigate backwards can cause issues, use the homepage button instead in the header.
 
 There are also little React errors that can cause issues when rendering the certain pages, a refresh usually takes care of this issue for the time being.
+
+# Ropsten
+
+The contract is live on the Ropsten network and can be viewed here: https://ropsten.etherscan.io/address/0x23be7ec1cb6985986efffdef83c3511cf940f562
