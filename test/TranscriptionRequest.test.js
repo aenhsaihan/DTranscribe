@@ -61,26 +61,32 @@ contract(
       'QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz';
 
     describe('Transcription Factory', () => {
+      // making sure that the factory can be deployed
+      // the factory should also be able to produce a transcription request
       it('deploys a factory and a transcription request', () => {
         transcriptionFactory.address.should.exist;
         transcriptionRequest.address.should.exist;
       });
 
+      // the creator of the factory should also be its owner
       it('marks caller as the owner', async function() {
         const factoryOwner = await transcriptionFactory.owner();
         factoryOwner.should.equal(owner);
       });
 
+      // the transcription factory should have at least one transcription request in its inventory
       it('should have created one transcription request', async function() {
         const transcriptionRequestsLength = await transcriptionFactory.getTranscriptionRequestsCount.call();
         transcriptionRequestsLength.toNumber().should.equal(1);
       });
 
+      // the account that created the request should be the requester
       it('requester should have created the transcription request', async function() {
         const creator = await transcriptionRequest.requester.call();
         creator.should.be.a('string').that.equals(requester);
       });
 
+      // the address of the request should be kept in the factory for later verification
       it('transcription request should be verified', async function() {
         const transcriptionRequestAddress = await transcriptionFactory.deployedTranscriptionRequests.call(
           0
@@ -94,6 +100,7 @@ contract(
     });
 
     describe('Transcription Request: Transcription Phase', () => {
+      // an account should be able to transcribe a request during the transcription phase
       it('should transcribe a request during the transcription phase', async function() {
         const now = Date.now() / 1000;
         const transcriptionPhaseEndTime = await transcriptionRequest.transcriptionPhaseEndTime.call();
@@ -106,6 +113,8 @@ contract(
         transcription.should.exist;
       });
 
+      // the transcribing account should be recorded in the contract for later verification
+      // to prevent the same account from submitting multiple transcriptions
       it('transcriber should be verified', async function() {
         const verifiedTranscriber = await transcriptionRequest.verifiedTranscribers.call(
           transcriber
