@@ -7,3 +7,6 @@ In the root directory of the project, run `npm run dev`.
 
 Once the local server is running, it should be listening on `localhost:3000`, use Chrome to access the server.
 
+# Tests
+
+The explanations for why a test case was used are written as comments in the test file in the `test` directory.
