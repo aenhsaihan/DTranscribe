@@ -24,3 +24,7 @@ As the requester, I should be able to see the transcriptions and choose the tran
 As a requester, I should be able to revoke my reward and kill the transcription if at least two transcriptions have not yet been submitted.
 
 As anyone, I should be able to declare a no show if the requester has not yet chosen a transcription after the voting phase has ended.
+
+# Known bugs
+
+When you're on the transcription request details page, hitting the back button to navigate backwards can cause issues, use the homepage button instead in the header.
